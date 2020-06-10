@@ -1,7 +1,8 @@
-# EMIT
-Emissions Model Interface Tool
+# Emissions Model Interface Tool (EMIT)
 
-A collection of scripts and code to convert emissions to CAM-SE regionally refined grids
+A collection of scripts and code to convert emissions to CAM-SE regionally refined meshes and MPAS meshes
+
+The functions of these scripts will eventually become part of an online regridding tool that is part of the MUSICA framework.
 
 ### Four Components
 1. Regridding of point sources, biomass burning emissions and NEI emissions 
@@ -14,7 +15,7 @@ The scientific description can be found in the [wiki](https://github.com/NCAR/EM
 # 1. Regrid point sources, biomass burning emissions and NEI emissions
 
 ## Where to get netcdf files for testing (And where to place them)
-- [ ] source data location here
+- [ ] Someone needs to identify source data location here
 ## Compile and run tests
 ```
 cd regrid_code/Dev_FIRE_EMIS/src
