@@ -11,7 +11,7 @@ A collection of scripts and code to convert emissions to CAM-SE regionally refin
 
 The scientific description can be found in the (wiki)[https://github.com/NCAR/EMIT/wiki]
 
-# Regrid point sources, biomass burning emissions and NEI emissions
+# 1. Regrid point sources, biomass burning emissions and NEI emissions
 
 ## Where to get netcdf files for testing (And where to place them)
 *source data location here*
@@ -23,10 +23,10 @@ cd ../tst
 ./run.exe
 ```
 
-# Combining NEI emissions with global emissions
+# 2. Combining NEI emissions with global emissions
 *Should something be here?*
 
-# Regrid CMIP6 emissions to different grids using ncl and ESMF
+# 3. Regrid CMIP6 emissions to different grids using ncl and ESMF
 
 ### 3.1. Regrid CMIP6 original resolution emissions to desired resolution in cmip6\_regrid/
 Script directory: regrid/FV2SE
@@ -43,7 +43,8 @@ Script to map names: rename\_and\_convert\_cmip\_hist.ncl
 * ne30\_ne30: /glade/p/acom/acom-climate/cmip6inputs/historical\_ne30
 * FV3: /glade/p/acom/acom-climate/cmip6inputs/historical\_C96
 
-# Regrid CAMS anthropogenic emissions 
+# 4. Regrid CAMS anthropogenic emissions 
+Script directory: regrid/CAMS
 Source data /glade/p/acom/acom-climate/tilmes/emis/download/
-Regridding the origin emissions to the desired SE mesh: FV2SE/Regrid\_fv2se\_cams\_anthro.ncl
-Regridding CAMS anthropogenic:  CMIP6/emissions\_cams/regrid\_cams\_anthro\_se.ncl
+Regridding the origin emissions to the desired SE mesh: Regrid\_fv2se\_cams\_anthro.ncl
+Regridding CAMS anthropogenic:  emissions\_cams/regrid\_cams\_anthro\_se.ncl
