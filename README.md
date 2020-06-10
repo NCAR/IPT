@@ -28,13 +28,13 @@ cd ../tst
 
 # 3. Regrid CMIP6 emissions to different grids using ncl and ESMF
 
-### 3.1. Regrid CMIP6 original resolution emissions to desired resolution in cmip6\_regrid/
+### 3.1. Regrid CMIP6 original resolution emissions to desired resolution
 Script directory: regrid/FV2SE \
 Batch script (for cheyenne) for conversion is in regrid\_main \
 Script to specify grids: Regrid\_fv2se\_cmip6\_main.ncl
 
-### 3.2 Emission name mapping is in emission\_naming/
-Script directory: CMIP6/emissions\_hist \
+### 3.2 Emission name remapping
+Script directory: regrid/emissions\_hist \
 Batch submission script (slurm) script\_rename \
 Script to map names: rename\_and\_convert\_cmip\_hist.ncl 
 
