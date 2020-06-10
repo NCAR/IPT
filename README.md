@@ -36,10 +36,8 @@ Batch script (for cheyenne) for conversion is in regrid\_main
 Script to specify grids: Regrid\_fv2se\_cmip6\_main.ncl
 
 ### 3.2 Emission name mapping is in emission\_naming/
-Script directory: CMIP6/emissions\_hist
-
-Batch submission script (slurm) script\_rename
-
+Script directory: CMIP6/emissions\_hist \
+Batch submission script (slurm) script\_rename \
 Script to map names: rename\_and\_convert\_cmip\_hist.ncl 
 
 # Regridded emission data
@@ -48,10 +46,7 @@ Script to map names: rename\_and\_convert\_cmip\_hist.ncl
 * FV3: /glade/p/acom/acom-climate/cmip6inputs/historical\_C96
 
 # 4. Regrid CAMS anthropogenic emissions 
-Script directory: regrid/CAMS
-
-Source data /glade/p/acom/acom-climate/tilmes/emis/download/
-
-Regridding the origin emissions to the desired SE mesh: Regrid\_fv2se\_cams\_anthro.ncl
-
-Regridding CAMS anthropogenic:  emissions\_cams/regrid\_cams\_anthro\_se.ncl
+Script directory: regrid/CAMS \
+Source data /glade/p/acom/acom-climate/tilmes/emis/download \
+Regridding the origin emissions to the desired SE mesh: Regrid\_fv2se\_cams\_anthro.ncl \
+Regridding CAMS anthropogenic:  emissions\_cams/regrid\_cams\_anthro\_se.ncl \
