@@ -1,5 +1,5 @@
-# EMIT
-Emissions Model Interface Tool
+# IPT
+Input Processing Tool for MUSICA
 
 A collection of scripts and code to convert emissions to CAM-SE regionally refined grids
 
