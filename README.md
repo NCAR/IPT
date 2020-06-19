@@ -12,22 +12,22 @@ This collection of scripts and code supports the production of input fields that
 1. FINN (Fire INventory from NCAR)
 
 A tool for regridding FINN v1.5 and v2.0 \*.txt files to FV, SE and SE-RR and MPAS are available. The tool includes a README file, which describes in detail how to use the code, and several example namelists files (\*.inp), which can be easily adapted as needed.
-Finn fire emissions are available between xx and 2020 from [here.](http://somewhere_over_the_rainbow)
+Finn fire emissions are available between xx and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 2. Qfed (Quick Fire Emissions Dataset)
 
-Qfed fire emissions are available between xx and 2020 from [here.](http://somewhere_over_the_rainbow)
+Qfed fire emissions are available between xx and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 ### Anthropogenic
 
-1. EPA
+1. EPA (Environmental Protection Agency)
 
 NEI emissions are only available only for the year 20XX, but scripts are available to correct them for other years.
-Source data can be found [here.](http://somewhere_over_the_rainbow)
+Source data can be found [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 2. CAMS (Copernicus Atmosphere Monitoring Service)
 
-Global CAMS anthropogenic emissions are available between 2000 and 2010 from [here.](http://somewhere_over_the_rainbow)
+Global CAMS anthropogenic emissions are available between 2000 and 2010 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 Interpolate original CAMS emissions to the desired grid: regrid\_fv2se\_cams\_anthro.ncl
 
@@ -40,7 +40,7 @@ Interpolate original CMIP6 emissions to the desired grid: regrid\_fv2se\_cmip6\_
 
 Rename and calculate regridded to be able to run in CESM2: 
 
-- [ ] source data location here
+Source data is available [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 ## Meteorological Data Regridding
 
@@ -57,5 +57,5 @@ To run with CESM, the resulting file has to be converted to a cdf5 format:
 
 `nccopy -k cdf5 oldfile newfile`
 
-source data can be found [here](http://somewhere_over_the_rainbow)
+Source data can be found [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
