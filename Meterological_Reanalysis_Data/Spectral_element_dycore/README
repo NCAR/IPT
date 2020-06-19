@@ -1,0 +1,5 @@
+Gen_MERRA2_ne30.csh
+Gen_MERRA2_ne30pg3.csh
+Gen_MERRA2_ne0CONUSne30x8_mt12.csh
+/gpfs/fs1/p/cesm/chwg_dev/tilmes/my_cesm_sandbox/cam6_1_019/components/cam/tools/nudging/Gen_Data/Gen_Data_SEdycore/Gen_Data_SETNAME_ne30/*
+
