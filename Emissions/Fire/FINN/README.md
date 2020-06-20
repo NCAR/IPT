@@ -9,9 +9,11 @@ Emissions files are available from [Christine Wiedinmyer](http://bai.acom.ucar.e
 
 # Build
 `cd src`
+
 `make\_fire\_emis`
 
 # Run
 `cd run `
+
 `../src/fire\_emis < {\_\_.inp}`
 
