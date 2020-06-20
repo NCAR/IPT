@@ -8,10 +8,10 @@ Emissions files are available from [Christine Wiedinmyer](http://bai.acom.ucar.e
 *NOTE: FINNv1.5 and FINN2 files contain different species and different numbers of columns.  Please read the FINN2 README for more details (at: http://bai.acom.ucar.edu/Data/fire/).*
 
 # Build
-`cd src
-make\_fire\_emis`
+`cd src`
+`make\_fire\_emis`
 
 # Run
-`cd run 
-../src/fire\_emis < {\_\_.inp}`
+`cd run `
+`../src/fire\_emis < {\_\_.inp}`
 
