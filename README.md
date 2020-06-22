@@ -1,50 +1,61 @@
 # IPT
-Input Processing Tool for MUSICA version 0
+Input Processing Tools for MUSICA
 
-A collection of scripts and code to convert emissions to CAM-SE regionally refined grids
+Detailed discussion will be provided on the MUSICA wiki. [https://wiki.ucar.edu/display/MUSICA/MUSICA+Home]
 
-### Four Components
-1. Regridding of point sources, biomass burning emissions and NEI emissions 
-2. Combining NEI emissions with global emissions
-3. Regridding CMIP6 emissions using ncl and ESMF tools
-4. Regridding CAMS anthropogenic emissions using ncl and ESMF tools
+This collection of scripts and code are for the production of input fields that are required to run MUSICA-V0.  They target emissions, meterological reanalyses for nudging, and initial conditions.
 
-The scientific description can be found in the [wiki](https://github.com/NCAR/EMIT/wiki)
 
-# 1. Regrid point sources, biomass burning emissions and NEI emissions
+## Emissions
 
-## Where to get netcdf files for testing (And where to place them)
-- [ ] source data location here
-## Compile and run tests
-```
-cd regrid_code/Dev_FIRE_EMIS/src
-gmake Makefile
-cd ../tst
-./run.exe
-```
+### Fire (Biomass burning)
 
-# 2. Combining NEI emissions with global emissions
-- [ ] Should something be here?
+1. FINN (Fire INventory from NCAR)
 
-# 3. Regrid CMIP6 emissions to different grids using ncl and ESMF
+A tool for regridding FINN v1.5 and v2.0 \*.txt files to FV, SE and SE-RR are available. The tool includes a README file, which describes in detail how to use the code, and several example namelists files (\*.inp), which can be easily adapted as needed.
+FINN fire emissions are available between 2002 and 2020 from http://bai.acom.ucar.edu/Data/fire/
 
-### 3.1. Regrid CMIP6 original resolution emissions to desired resolution
-Script directory: regrid/FV2SE \
-Batch script (for cheyenne) for conversion is in regrid\_main \
-Script to specify grids: Regrid\_fv2se\_cmip6\_main.ncl
+2. QFED (Quick Fire Emissions Dataset)
 
-### 3.2 Emission name remapping
-Script directory: regrid/emissions\_hist \
-Batch submission script (slurm) script\_rename \
-Script to map names: rename\_and\_convert\_cmip\_hist.ncl 
+QFED fire emissions are available between 2000 and 2020 from NASA Goddard/GMAO  https://gmao.gsfc.nasa.gov/research/science_snapshots/global_fire_emissions.php
 
-# Regridded emission data
-* CSLAM: /glade/p/acom/acom-climate/cmip6inputs/historical\_ne30pg3
-* ne30\_ne30: /glade/p/acom/acom-climate/cmip6inputs/historical\_ne30
-* FV3: /glade/p/acom/acom-climate/cmip6inputs/historical\_C96
+### Anthropogenic
 
-# 4. Regrid CAMS anthropogenic emissions 
-Script directory: regrid/CAMS \
-Source data /glade/p/acom/acom-climate/tilmes/emis/download \
-Regridding the origin emissions to the desired SE mesh: Regrid\_fv2se\_cams\_anthro.ncl \
-Regridding CAMS anthropogenic:  emissions\_cams/regrid\_cams\_anthro\_se.ncl \
+1. EPA (Environmental Protection Agency)
+
+NEI emissions for the U.S. are only available for the year 20XX, but scripts are available to correct them for other years.
+Source data can be found [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+
+2. CAMS (Copernicus Atmosphere Monitoring Service)
+
+Global CAMS anthropogenic emissions are available between 2000 and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+
+Interpolate original CAMS emissions to the desired grid: regrid\_fv2se\_cams\_anthro.ncl
+
+Rename and calculated regridded CAMS emissions to be able to run in CESM2: rename\_cams\_anthro\_se.ncl
+
+### CMIP6 (Climate Model Intercomparison Project)
+
+CMIP6 standard historical anthropogenic and biomass burning emissions are available for 1750-2014. 
+Interpolate original CMIP6 emissions to the desired grid: regrid\_fv2se\_cmip6\_main.ncl
+
+Rename and calculate MOZART species to be able to run in CESM2: 
+
+Source data is available [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+
+## Meteorological Data Regridding
+
+MERRA2 original data script to regrid to the desired resolution
+
+MERRA2 reanalysis between 1975 and 2020 on the original horizontal and vertical grid are available [here](https://rda.ucar.edu/datasets/ds313.3/) or local on cheyenne
+
+## Initial Conditions Regridding
+
+Atmospheric initial condition files are regridded using a script that allows us to regrid from the standard spectral element 1 degree resolution to the new grid. 
+/glade/u/home/tilmes/ncl/SE/regrid\_all\_spectral\_data.ncl
+
+To run with CESM, the resulting file has to be converted to a cdf5 format:
+
+`nccopy -k cdf5 oldfile newfile`
+
+Source data can be found [somewhere over the rainbow](http://somewhere_over_the_rainbow)
