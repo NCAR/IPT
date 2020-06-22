@@ -1,9 +1,9 @@
 # IPT
 Input Processing Tools for MUSICA
 
-Detailed discussion is in the [wiki](https://github.com/NCAR/EMIT/wiki)
+Detailed discussion will be provided on the MUSICA wiki. [https://wiki.ucar.edu/display/MUSICA/MUSICA+Home]
 
-This collection of scripts and code supports the production of input fields that are required to run MUSICA V0.  They target emissions, meterological Iata, and initial conditions.
+This collection of scripts and code are for the production of input fields that are required to run MUSICA-V0.  They target emissions, meterological reanalyses for nudging, and initial conditions.
 
 
 ## Emissions
@@ -12,23 +12,23 @@ This collection of scripts and code supports the production of input fields that
 
 1. FINN (Fire INventory from NCAR)
 
-A tool for regridding FINN v1.5 and v2.0 \*.txt files to FV, SE and SE-RR and MPAS are available. The tool includes a README file, which describes in detail how to use the code, and several example namelists files (\*.inp), which can be easily adapted as needed.
-Finn fire emissions are available between xx and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+A tool for regridding FINN v1.5 and v2.0 \*.txt files to FV, SE and SE-RR are available. The tool includes a README file, which describes in detail how to use the code, and several example namelists files (\*.inp), which can be easily adapted as needed.
+FINN fire emissions are available between 2002 and 2020 from http://bai.acom.ucar.edu/Data/fire/
 
-2. Qfed (Quick Fire Emissions Dataset)
+2. QFED (Quick Fire Emissions Dataset)
 
-Qfed fire emissions are available between xx and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+QFED fire emissions are available between 2000 and 2020 from NASA Goddard/GMAO  https://gmao.gsfc.nasa.gov/research/science_snapshots/global_fire_emissions.php
 
 ### Anthropogenic
 
 1. EPA (Environmental Protection Agency)
 
-NEI emissions are only available only for the year 20XX, but scripts are available to correct them for other years.
+NEI emissions for the U.S. are only available for the year 20XX, but scripts are available to correct them for other years.
 Source data can be found [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 2. CAMS (Copernicus Atmosphere Monitoring Service)
 
-Global CAMS anthropogenic emissions are available between 2000 and 2010 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
+Global CAMS anthropogenic emissions are available between 2000 and 2020 from [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
 Interpolate original CAMS emissions to the desired grid: regrid\_fv2se\_cams\_anthro.ncl
 
@@ -36,10 +36,10 @@ Rename and calculated regridded CAMS emissions to be able to run in CESM2: renam
 
 ### CMIP6 (Climate Model Intercomparison Project)
 
-CMIP6 standard historical emissions are available between 1750 and 2014. 
+CMIP6 standard historical anthropogenic and biomass burning emissions are available for 1750-2014. 
 Interpolate original CMIP6 emissions to the desired grid: regrid\_fv2se\_cmip6\_main.ncl
 
-Rename and calculate regridded to be able to run in CESM2: 
+Rename and calculate MOZART species to be able to run in CESM2: 
 
 Source data is available [somewhere over the rainbow](http://somewhere_over_the_rainbow)
 
