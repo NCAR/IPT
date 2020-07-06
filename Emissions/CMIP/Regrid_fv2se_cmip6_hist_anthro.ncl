@@ -3,8 +3,8 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/esmf/ESMF_regridding.ncl"
 
-undef("Regrid_fv2se_cmip6_hist")
-procedure Regrid_fv2se_cmip6_hist(resolution,dstPath,period,dstGridName,srcGridName,wgtGridName)
+undef("Regrid_fv2se_cmip6_hist_anthro")
+procedure Regrid_fv2se_cmip6_hist_anthro(resolution,dstPath,period,dstGridName,srcGridName,wgtGridName)
 
 
 begin

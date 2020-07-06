@@ -33,20 +33,21 @@ begin
   ;------------------------------------------------------------------------------
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  USER CHANGES START
+;   change <user> to your user name or use a different directory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; point to your own regrid director if you have a new grid
   grid_dir ="/glade/work/tilmes/refgrids/"
-  wght_dir ="/glade/work/tilmes/regrid/Grid_Weights/"
-  ingrid   = "f09"
- ; outgrid   = "f09"
-   outgrid   = "ne30np4"
+  wght_dir ="/glade/work/<user>/regrid/Grid_Weights/"
+  ingrid   = "f01"
+  outgrid   = "ne30np4"
  ;  outgrid   = "ne30pg3"
 ;  outgrid  = "conus_30_x8"
   interp   = "conserve"
   srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
   ;dstPath = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30/"
-  dstPath = "/glade/scratch/tilmes/emissions/cams/ne30np4/"
-  ;dstPath = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
+  dstPath = "/glade/scratch/<user>/emissions/cams/ne30np4/"
+  ;dstPath = "/glade/scratch/<user>/emissions/cams/ne30pg3/"
 
   ; Set output grid file and set coordinate values
   ;   SE needs to use info from pentagons file.
@@ -68,7 +69,10 @@ begin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  USER CHANGES END 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; create directories
+  system("mkdir -p " + grid_dir)
+  system("mkdir -p " + wght_dir)
+  system("mkdir -p " + dstPath)
 
 
   ; Sanity check

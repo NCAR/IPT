@@ -9,14 +9,16 @@ begin
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; USER CHANGES start
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/conus/"
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/"
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
-dir_inp = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
+; change <user> to your user name or a different directory
+
+;dir_inp = "/glade/scratch/<user>/emissions/cams/conus/"
+;dir_inp = "/glade/scratch/<user>/emissions/cams/"
+;dir_inp = "/glade/scratch/<user>/emissions/cams/ne30pg3/"
+dir_inp = "/glade/scratch/<user>/emissions/cams/ne30pg3/"
 version= "_v3.1"
-;dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne0CONUSne30x8/"
-; dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne30/"
- dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne30pg3/"
+;dir_out = "/glade/u/home/tilmes/acom-climate/<user>/emis/CAMS_Anthro_ne0CONUSne30x8/"
+; dir_out = "/glade/u/home/tilmes/acom-climate/<user>/emis/CAMS_Anthro_ne30/"
+ dir_out = "/glade/u/home/tilmes/acom-climate/<user>/emis/CAMS_Anthro_ne30pg3/"
 ;resolution = "ne0CONUSne30x8"
 resolution = "ne30_ne30"
 ;resolution = "ne30pg3"
