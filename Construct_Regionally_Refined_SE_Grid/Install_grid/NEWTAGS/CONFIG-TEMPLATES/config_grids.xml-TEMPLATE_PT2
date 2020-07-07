@@ -1,0 +1,101 @@
+
+  </grids>
+
+  <!-- ======================================================== -->
+  <!-- Component grid domain specifications -->
+  <!-- ======================================================== -->
+
+  <domains>
+
+    <domain name="null">
+      <!-- null grid -->
+      <nx>0</nx> <ny>0</ny>
+      <file>unset</file>
+      <desc>null is no grid: </desc>
+    </domain>
+
+    <!-- ======================================================== -->
+    <!-- OCN/ICE domains -->
+    <!-- ======================================================== -->
+
+    <domain name="gx1v7">
+      <nx>320</nx>  <ny>384</ny>
+      <file grid="atm|lnd">$DIN_LOC_ROOT/share/domains/domain.ocn.gx1v7.151008.nc</file>
+      <file grid="ocnice">$DIN_LOC_ROOT/share/domains/domain.ocn.gx1v7.151008.nc</file>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/gx1v7_151008_ESMFmesh.nc</mesh>
+      <desc>gx1v7 is displaced Greenland pole 1-deg grid with Caspian as a land feature:</desc>
+    </domain>
+
+    <domain name="tx0.1v2">
+      <nx>3600</nx> <ny>2400</ny>
+      <file grid="ocnice">$DIN_LOC_ROOT/share/domains/domain.ocn.tx0.1v2.161014.nc</file>
+      <desc>tx0.1v2 is tripole v2 1/10-deg grid:</desc>
+      <support>Experimental for high resolution experiments</support>
+    </domain>
+
+    <!-- ======================================================== -->
+    <!-- ROF domains -->
+    <!-- ======================================================== -->
+
+    <domain name="rx1">
+      <nx>360</nx> <ny>180</ny>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/rx1_nomask_181022_ESMFmesh.nc</mesh>
+      <desc>rx1 is 1 degree river routing grid (only valid for DROF):</desc>
+      <support>Can only be used by DROF</support>
+    </domain>
+
+    <domain name="r05">
+      <nx>720</nx> <ny>360</ny>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/r05_nomask_c110308_ESMFmesh.nc</mesh>
+      <desc>r05 is 1/2 degree river routing grid:</desc>
+    </domain>
+
+    <domain name="r01">
+      <nx>3600</nx> <ny>1800</ny>
+      <!-- TODO (mvertens, 2018-12-02): create a domain file for this  -->
+      <desc>r01 is 1/10 degree river routing grid:</desc>
+      <support>For experimental use by high resolution grids</support>
+    </domain>
+
+    <domain name="JRA025">
+      <nx>1440</nx> <ny>720</ny>
+      <!-- TODO (mvertens, 2018-12-02): create a domain file for this  -->
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/JRA025m.170209_ESMFmesh.nc</mesh>
+      <desc>JRA is 0.25 degree runoff grid for use with JRA-55 runoff data</desc>
+    </domain>
+
+    <!-- ======================================================== -->
+    <!-- GLC domains -->
+    <!-- ======================================================== -->
+
+    <domain name="gland20">
+      <nx>76</nx> <ny>141</ny>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/gland_20km_c150511_ESMFmesh.nc</mesh>
+      <desc>20-km Greenland grid</desc>
+    </domain>
+
+    <domain name="gland5UM">
+      <nx>301</nx> <ny>561</ny>
+      <desc>5-km Greenland grid (new version from U. Montana)</desc>
+    </domain>
+
+    <domain name="gland4">
+      <nx>416</nx> <ny>704</ny>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/greenland_4km_epsg3413_c170414_ESMFmesh_c20190729.nc</mesh>
+      <desc>4-km Greenland grid, for use with the glissade dycore</desc>
+    </domain>
+
+    <!-- ======================================================== -->
+    <!-- WW3 domains-->
+    <!-- ======================================================== -->
+
+    <domain name="ww3a">
+      <nx>90</nx>  <ny>50</ny>
+      <file mask="ww3a">$DIN_LOC_ROOT/share/domains/domain.lnd.ww3a_ww3a.120222.nc</file>
+      <file mask="ww3a">$DIN_LOC_ROOT/share/domains/domain.ocn.ww3a_ww3a.120222.nc</file>
+      <mesh driver="nuopc">$DIN_LOC_ROOT/share/meshes/ww3a_120222_ESMFmesh.nc</mesh>
+      <desc>WW3 90 x 50 global grid</desc>
+      <support>For testing of the WAV model</support>
+    </domain>
+
+

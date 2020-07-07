@@ -1,0 +1,79 @@
+# Compiler and flags
+# CC= icpc
+CC= g++
+
+# NETCDF library and directories
+#-----------------------------
+NETCDF_INCLUDEDIR=./include
+NETCDF_LIBDIR=./lib
+LDFILES= -lnetcdf
+#
+# For My MAC
+#--------------
+#NETCDF_INCLUDEDIR=/Users/patc/Projects/Qt/VRM_Editor/netcdf/include
+#NETCDF_LIBDIR=/Users/patc/Projects/Qt/VRM_Editor/netcdf/lib
+#LDFILES= -lnetcdf -lhdf5_hl -lhdf5 -lm /Users/patc/Projects/Qt/VRM_Editor/netcdf/lib/libz.a
+#
+# For Casper
+#-------------------
+#NETCDF_INCLUDEDIR=/opt/local/include
+#NETCDF_LIBDIR=/opt/local/lib
+#NETCDF_INCLUDEDIR= /usr/local/netcdf-c-4.6.1-f-4.4.4-gcc-g++-gfortran-8.1.0/include
+#NETCDF_LIBDIR= /usr/local/netcdf-c-4.6.1-f-4.4.4-gcc-g++-gfortran-8.1.0/lib
+#NETCDF_INCLUDEDIR=/glade/u/apps/ch/opt/netcdf/4.4.1.1/intel/17.0.1/include
+#NETCDF_LIBDIR=/glade/u/apps/ch/opt/netcdf/4.4.1.1/intel/17.0.1/lib
+#LDFILES= -lnetcdf
+
+
+
+# Local files
+FILES= Create_VRMgrid.cpp \
+	SQuadGen/GridElements.cpp \
+	SQuadGen/CubedSphereGrid.cpp \
+	SQuadGen/IcosahedralFlagGrid.cpp \
+	SQuadGen/RefinementTemplateCUBIT.cpp \
+	SQuadGen/RefinementTemplateLOWCONN.cpp \
+	SQuadGen/RefinementTemplateLOWCONNOLD.cpp \
+	SQuadGen/Tessellate.cpp \
+	SQuadGen/SpringDynamics.cpp \
+	SQuadGen/netcdf.cpp \
+	SQuadGen/ncvalues.cpp \
+	ReadWrite.cpp \
+	RefinementMap.cpp \
+	RefinementCube.cpp \
+	CubeGrid.cpp \
+	RefineCubeGrid.cpp \
+	NeighborAdjustments.cpp
+
+# Load system-specific defaults
+CFLAGS+= -I$(NETCDF_INCLUDEDIR)
+LDFLAGS+= -L$(NETCDF_LIBDIR)
+
+BUILDDIR=build
+$(BUILDDIR)/%.o : %.cpp
+	@mkdir -p $(BUILDDIR)
+	@mkdir -p $(BUILDDIR)/SQuadGen
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+##
+## Build instructions
+##
+Create_VRMgrid: $(FILES:%.cpp=$(BUILDDIR)/%.o)
+	$(CC) $(LDFLAGS) -o $@ $(FILES:%.cpp=$(BUILDDIR)/%.o) $(LDFILES)
+
+##
+## Clean
+##
+clean:
+	rm -rf $(DEPDIR)
+	rm -rf $(BUILDDIR)
+
+##
+## Include dependencies
+##
+depend: $(FILES)
+	makedepend -- $(CFLAGS) -- $^;
+
+
+# DO NOT DELETE
+

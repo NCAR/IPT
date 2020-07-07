@@ -1,0 +1,52 @@
+
+This directory contains the collection of tools needed to create CESM
+intput files for a given variable resolution grid. 
+
+#=======================================================
+# Information
+#=======================================================
+README               Contains information and instructions for the steps from the creation of
+/Docs/               a desired grid refinement to the installation and testing of the new grid 
+                     in CESM. 
+
+#=======================================================
+# Creating new VRM grids:
+#=======================================================
+/VRM_ControlVolumes/ Fortran program to create SCRIP and LATLON grid files for a given EXODUS file.
+/VRM_Editor/         A C++ GUI program for the interactive creation of refined grids. 
+/SQuadGen/           C++ program for creating variable resolution grids. 
+
+
+#=======================================================
+# Creating input data, maps, and domains for VRM grids:
+#  Users must first set environment variables: 
+#
+#        VRM_CESM_TAG , VRM_REPO_PATH, VRM_GRID_TAG, 
+#        VRM_GRID_NAME, VRM_GRID_NCO , VRM_DATE
+#
+#  for their new grid (see REQUIRED_ENV_SETTINGS), then run the 
+#  MAKE_**** script in each gen_*** directory to generate the 
+#  scripts needed to create the VRM datasets. 
+#=======================================================
+/gen_ESMFmesh/       Shell script to generate ESMF mesh file from a given SCRIP file. 
+/gen_mapping/        Shell script to generate 'mapping' files for converting values between grids.
+/gen_domain/         Shell script to generate lnd/ocn 'domain' files.
+/gen_CLMsrfdata/     Shell script to  create 'landuse' and 'surfdata' files.
+/gen_CAMncdata/      Shell script to create the 'ncdata' initial file. 
+/gen_atmsrf/         NCL program to to create the 'atmsrf' input file.
+/gen_topo/           Programs to create a topography file by interpolating values from 
+
+
+#=======================================================
+# Installation
+#=======================================================
+/Install_grid/       Directory containing the shell scripts and instructions
+                     fro installing a new grid into CESM.
+
+#=======================================================
+# Utility
+#=======================================================
+/VRM_Diagnostics/    Directory with diagnostic graphing programs 
+                     and other tests for a new grid.
+
+
