@@ -5,7 +5,7 @@
 ; Simone Tilmes, May 21st 2020, tilmes@ucar.edu
 ;
 
-load "Regrid_fv2se_cmip6_hist.ncl"
+load "Regrid_fv2se_cmip6_hist_anthro.ncl"
 load "Regrid_fv2se_cmip6_hist_bb.ncl"
 load "Regrid_fv2se_cmip6_hist_voc.ncl"
 load "Regrid_fv2se_cmip6_other.ncl"
@@ -16,7 +16,6 @@ load "create_contvolc_files.ncl"
   ingrid   = "f09"
   interp   = "conserve"
 
-
 ; don't change srcPath 
   srcPath_cmip = "/glade/p/acom/acom-climate/cmip6inputs/emis/hist/"
   srcPath_other = "/glade/p/cesmdata/cseg/inputdata/atm/cam/chem/emis/CMIP6_emissions_1750_2015/"
@@ -25,10 +24,12 @@ load "create_contvolc_files.ncl"
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ; USER changes start 
+; change <user> to your user name 
 ;;;;;;;;;;;;;;;;;;;;;;
-
 ; define/change grid information, destination location for the regridded files, and specifc period
 ; options for outgrid 
+
+; add  your own directory if you regrid to a  new grid
   grid_dir ="/glade/work/tilmes/refgrids/"
   wght_dir ="/glade/work/tilmes/regrid/Grid_Weights/"
 ;
@@ -37,14 +38,11 @@ load "create_contvolc_files.ncl"
   ;resolution = "ne30pg3"
   ;resolution = "conus_30_x8"
   ;resolution = "C96"
-  dstPath = "/glade/scratch/tilmes/emissions/historical_ne30np4/"
-  ;dstPath = "/glade/scratch/tilmes/emissions/historical_ne30pg3/"
-  ;dstPath_other = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30pg3/"
-  ;dstPath = "/glade/scratch/tilmes/emissions/historical_ne0CONUSne30x8/"
-  ;dstPath = "/glade/scratch/tilmes/emissions/historical_C96/"
-  dstPath_other = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30np4/"
+  dstPath = "/glade/scratch/<user>/emissions/historical_"+resolution"+/"
+  dstPath_other = "/glade/scratch/<user>/cmip6inputs/historical_"+resolution+"/"
 
   system("mkdir "+dstPath)
+  system("mkdir "+dstPath_other)
   period = "all"
   ;period = "200001-201412"
 
@@ -77,7 +75,7 @@ load "create_contvolc_files.ncl"
 
   srcGridName = wght_dir+"SCRIP_"+ingrid+".nc"
 
-  ; Open the first input file adn read in lat/lon values
+  ; Open the first input file and read in lat/lon values
   ;  to create ESMF grid info.
   ;---------------------------------------------------------
   srcGridName = wght_dir+"SCRIP_"+ingrid+".nc"
@@ -108,8 +106,8 @@ load "create_contvolc_files.ncl"
 ;;;;;;;;;;;;;;;;;;;;;
 
 
-  print("Regrid_fv2se_cmip6_hist")
-  Regrid_fv2se_cmip6_hist(resolution,dstPath,period,dstGridName,srcGridName,wgtGridName)
+  print("Regrid_fv2se_cmip6_hist_anthro")
+  Regrid_fv2se_cmip6_hist_anthro(resolution,dstPath,period,dstGridName,srcGridName,wgtGridName)
   print("Regrid_fv2se_cmip6_hist_bb")
   Regrid_fv2se_cmip6_hist_bb(resolution,dstPath,period,dstGridName,srcGridName,wgtGridName)
   print("Regrid_fv2se_cmip6_hist_voc")
