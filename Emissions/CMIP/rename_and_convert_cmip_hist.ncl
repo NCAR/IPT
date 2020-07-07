@@ -13,20 +13,14 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 begin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; USER CHANGES start
-; dir_inp = "/glade/scratch/tilmes/emissions/historical_C96/"
-; dir_out = "/glade/p/acom/acom-climate/cmip6inputs/historical_C96/"
-  dir_inp = "/glade/scratch/tilmes/emissions/historical_ne30np4/"
-;  dir_inp = "/glade/scratch/tilmes/emissions/historical_ne30pg3/"
-;  dir_out = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30pg3/"
-   dir_out = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30np4/"
-;dir_inp = "/glade/scratch/tilmes/emissions/historical_ne0CONUSne30x8/"
-;dir_out = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne0CONUSne30x8/"
- resolution = "ne30np4"
+; change <user> to your user name
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ resolution = "ne30np4"   ; adjust to your grid
+ dir_inp = "/glade/scratch/<user>/emissions/historical_"+resolution+"/"
+ dir_out = "/glade/scratch/<user>/cmip6inputs/historical_ne30np4/"
 ; resolution= "ne30pg3"
 ; resolution = "C96"
 ; resolution = "ne0CONUSne30x8"
-; USER CHANGES start
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  creation_date = systemfunc ("date +%Y%m%d")
 
@@ -42,7 +36,7 @@ begin
   system("mkdir -p " + dir_out)
 
 
-do nspc=31,33  ; nspc gt 30 require other emissions to be processed 
+do nspc=0,33  ; nspc gt 30 require other emissions to be processed 
 ;
 ; loop over sectors
 ;
