@@ -1,52 +1,57 @@
-;
-; read original CEDS/CMIP6 SSP emissions files
-; regrid to 1 deg and convert from kg/m2/s to molecules/cm2/s
-; sum all anthro sectors to one variable
-;  (requires gnu compiler, not intel, on cheyenne/geyser)
-;
+; rename_cams_anthro_se.ncl
 
 begin
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; USER CHANGES start
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/conus/"
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/"
-;dir_inp = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
-dir_inp = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
+; Create CESM-ready emissions from SE grid CAMS emissions
+;
+;   transform regridded CAMS anthropogenic emissions into CESM species
+;   run after running Regrid_fv2se_cams_anthro.ncl
+;
+; usage: ncl rename_cams_anthro_se.ncl
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; USER CHANGES START
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Location of files created with Regrid_fv2se_cams_anthro.ncl
+dir_inp = "/glade/scratch/emmons/emis/cams_ne30np4/"
+;
+; version of CAMS files (in filename)
 version= "_v3.1"
-;dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne0CONUSne30x8/"
-; dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne30/"
- dir_out = "/glade/u/home/tilmes/acom-climate/tilmes/emis/CAMS_Anthro_ne30pg3/"
+;
+; model resolution (as written in filenames)
 ;resolution = "ne0CONUSne30x8"
-resolution = "ne30_ne30"
+resolution = "ne30np4"
 ;resolution = "ne30pg3"
-;;;;;;;;;;;;;;;;;;;;;;
-; USER changes done
-;;;;;;;;;;;;;;;;;;;;;;
+;
+; Directory for new files
+dir_out = "/glade/scratch/emmons/emis/cesm_ne30np4/"
 
-
- PI  = get_pi("float" )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; USER CHANGES END
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 print(dir_out)
 print(dir_inp)
 ;
 ; constants
 ;
+  PI  = get_pi("float" )
   avog = 6.022e23
   earth_rad  = 6.371e8 ; in cm
   earth_area = 4. * acos(-1.) * earth_rad * earth_rad
+;
 ; define creation date
 ;
-      creation_date = systemfunc ("date +%Y%m%d")
-;
+  creation_date = systemfunc ("date +%Y%m%d")
 ;
 ; make sure output dir exists
 ;
   system("mkdir -p " + dir_out)
 ;
-; loop over species
+; loop over species for CESM (MOZART-TS1)
 ;
-  do nspc=0,33
+;  do nspc=0,33
+  do nspc=1,1
 ;
     if ( nspc.eq.0 ) then
       spc_name = "BC"
@@ -253,38 +258,34 @@ print(dir_inp)
     hist_spec = "CAMS species: "+str2+str1
     print(hist_spec)
 
-if nspc .le. 27 then
+; 
+; Combine multiple CAMS species as needed to create CESM species
+;
+ if nspc .le. 27 then
 
   do ced  = 0, nspec1-1
 ;
-; get anthro files
-    files = systemfunc("ls " + dir_inp + "CAMS-GLOB-ANT_Glb_0.1x0.1_anthro_"+spc_name1(ced) + version+".nc")
+; Get each CAMS file
+;
+    files = systemfunc("ls " + dir_inp + resolution + "_CAMS-GLOB-ANT_Glb_0.1x0.1_anthro_"+spc_name1(ced) + version+".nc")
     nfils = dimsizes(files)
     print(files)
-; should be just 1 file per species
+    ; should be just 1 file per CAMS species
     nfil=0
+    file_inp = files(nfil)
+    in = addfile(file_inp,"r")
 ;
-      file_inp = files(nfil)
-      in = addfile(file_inp,"r")
-      ;
 ; read coordinates
 ;
+    lat_out   = in->lat
+    lon_out   = in->lon
+    time      = in->time
+    area = in->area
+    ntim = dimsizes(time)
+;
+    print("Processing " + file_inp)
 
-      lat_out   = in->lat
-      lon_out   = in->lon
-      time      = in->time
-      area = in->area
-      ntim = dimsizes(time)
-;
-      print("Processing " + file_inp)
-;
-; find emissions variable name
-;
-      vnames = getfilevarnames(in)
-      nnames = dimsizes(vnames)
-print(vnames)
-
-; get sum of all 
+   ; Use only 'sum' variable, not individual sectors
    var1 = in->sum
    fillv = var1@_FillValue
    var1=where(var1.eq.fillv,0.,var1)
@@ -292,7 +293,6 @@ print(vnames)
    emiss_inp = var1
    mw_spec = var1@molecular_weight
    printVarSummary(emiss_inp)
-;
 ;
 ; convert from kg/m2/s to molec/cm2/s
 ;
@@ -583,7 +583,7 @@ end if
       ncdf->time         = time
       ncdf->lat          = lat_out
       ncdf->lon          = lon_out
-      ncdf->area = area
+      ncdf->area         = area
 ;     ncdf->time_bnds    = time_bnds
       delete(ncdf)
 
@@ -659,10 +659,6 @@ end if
       file_att@data_title = "Number of "+sector(sec)+" emissions of "+spc_name2
       fileattdef(ncdf,file_att)
       filedimdef(ncdf,"time",-1,True)
-;
-;
-; define date array
-;
 ;
       ncdf->emiss_anthro= emis_num
       ncdf->date         = date
@@ -789,12 +785,8 @@ print(spec_name_sec(s1))
       delete(ncdf)
       delete(emiss_out1)
   end do
-
-
+;
   end if
-
-
-
 ;
 ; clean up
 ;
@@ -924,8 +916,7 @@ do sec=0,0
  end if
  end do
  end if  ; SOAG, IVOC, SVOC
-
-
+;
   end do   
 ;
 end
