@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/earthmap2k.jpg</file>
+        <file>images/earthspec2k.jpg</file>
+    </qresource>
+</RCC>

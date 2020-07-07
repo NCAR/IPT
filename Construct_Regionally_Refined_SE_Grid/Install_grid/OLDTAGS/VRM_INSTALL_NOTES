@@ -1,0 +1,331 @@
+
+ Given path to repository containing the Varibale Resolution Grid and
+ associated files, add entries in config files to implement the grid 
+ and set namelist values. 
+  
+ For the China refinement grid example shown in the following (1)-(7) sections
+ the grid name is: ne0np4.China01.ne30x8
+ and the grid and associated files are located in:
+    /path/to/my/repo/ne0np4.China01.ne30x8/
+
+
+ For grid and associated files located in a different directory, edit the 
+ script 'MAKE_VRM_Config_Entries.csh' and change the path to the new location. 
+ Then run the script. It will generate 5 files:
+
+     VRMODS_config_component_cesm.xml  
+     VRMODS_config_grids.xml  
+     VRMODS_horiz_grid.xml  
+     VRMODS_namelist_defaults_cam.xml  
+     VRMODS_namelist_defaults_clm4_5.xml
+
+ containing the XML fragmants that need to be add to the config files as indicated
+ by the following sections: (1),(2),(3),(4),(6).
+ For sections, (5) and (7) it is easier to just edit the existing files and add
+ the needed values.
+ 
+
+  =====================================================================================
+  (1) Add grid information to ($CESM)/cime/config/cesm/config_grids.xml
+  =====================================================================================
+
+        NOTE: For the release tag there is only 1 file, but for the latest 
+              developmental tag, the informations is contained in multiple
+              files. (config_grids_common.xml, config_grids_mct.xml, config_grids.xml)
+
+      ------------------
+      * model_grid entry:
+      ------------------
+         <model_grid alias="ne0np4.China01.ne30x8_mg17">
+           <grid name="atm">ne0np4.China01.ne30x8</grid>
+           <grid name="lnd">ne0np4.China01.ne30x8</grid>
+           <grid name="ocnice">ne0np4.China01.ne30x8</grid>
+           <mask>gx1v7</mask>
+         </model_grid>
+
+      ------------------
+      * domain entry:
+      ------------------
+         <domain name="ne0np4.China01.ne30x8">
+           <nx>251534</nx> <ny>1</ny>
+           <file grid="atm|lnd" mask="gx1v7">/path/to/my/repo/ne0np4.China01.ne30x8/domains/domain.lnd.ne0np4.China01.ne30x8_gx1v7.190813.nc</file>
+           <file grid="ocnice"  mask="gx1v7">/path/to/my/repo/ne0np4.China01.ne30x8/domains/domain.ocn.ne0np4.China01.ne30x8_gx1v7.190813.nc</file>
+           <desc>ne0np4.China01.ne30x8 is a Spectral Elem 1-deg grid with a 1/8 deg refined region over China:</desc>
+           <support>Test support only</support>
+         </domain>
+
+      ------------------
+      * gridmap entries:
+      ------------------
+         <gridmap atm_grid="ne0np4.China01.ne30x8" ocn_grid="gx1v7">
+           <map name="ATM2OCN_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_gx1v7_aave.190813.nc</map>
+           <map name="ATM2OCN_SMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_gx1v7_blin.190813.nc</map>
+           <map name="ATM2OCN_VMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_gx1v7_blin.190813.nc</map>
+           <map name="OCN2ATM_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_gx1v7_TO_ne0np4.China01.ne30x8_aave.190813.nc</map>
+           <map name="OCN2ATM_SMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_gx1v7_TO_ne0np4.China01.ne30x8_aave.190813.nc</map>
+         </gridmap>
+         <gridmap lnd_grid="ne0np4.China01.ne30x8" glc_grid="gland4" >
+           <map name="LND2GLC_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_gland4km_aave.190813.nc</map>
+           <map name="LND2GLC_SMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_gland4km_blin.190813.nc</map>
+           <map name="GLC2LND_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_gland4km_TO_ne0np4.China01.ne30x8_aave.190813.nc</map>
+           <map name="GLC2LND_SMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_gland4km_TO_ne0np4.China01.ne30x8_aave.190813.nc</map>
+         </gridmap>
+         <gridmap lnd_grid="ne0np4.China01.ne30x8" rof_grid="r05">
+           <map name="LND2ROF_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_r05_aave.190813.nc</map>
+           <map name="ROF2LND_FMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_r05_TO_ne0np4.China01.ne30x8_aave.190813.nc</map>
+         </gridmap>
+         <gridmap atm_grid="ne0np4.China01.ne30x8" wav_grid="ww3a">
+           <map name="ATM2WAV_SMAPNAME">/path/to/my/repo/ne0np4.China01.ne30x8/maps/map_ne0np4.China01.ne30x8_TO_ww3a_blin.190813.nc</map>
+         </gridmap>
+
+
+  =====================================================================================
+  (2) Add grid information to ($CESM)/cime/src/drivers/mct/cime_config/config_component_cesm.xml
+  =====================================================================================
+      Add an entry for the ATM_NCPL value to set the timestep for the grid. 
+        144 <==> 600 second step.
+
+       <entry id="ATM_NCPL">
+         <type>integer</type>
+         <default_value>48</default_value>
+         <values match="last">
+           <value compset="_CAM\d+%WCBC">144</value>
+           <value compset="_CAM\d+%WCMX">288</value>
+           <value compset="_CAM\d+%WCXI">288</value>
+           <value compset="_DATM%COPYALL_NPS">72</value>
+           <value compset="_DATM.*_CLM">48</value>
+           <value compset="_DATM.*_DICE.*_POP2">4</value>
+           <value compset="_DATM.*_SLND.*_CICE.*_POP2">24</value>
+           <value compset="_DATM.*_CICE.*_DOCN">24</value>
+           <value compset="_DATM.*_DOCN%US20">24</value>
+           <value compset="_DATM%CPLHIST.+POP\d">48</value>
+           <value compset="_MPAS">1</value>
+           <value compset=".+" grid="a%0.23x0.31">96</value>
+           <value compset=".+" grid="a%ne60np4">96</value>
+           <value compset=".+" grid="a%ne60np4.pg3">96</value>
+           <value compset=".+" grid="a%ne60np4.pg4">96</value>
+           <value compset=".+" grid="a%ne120np4">192</value>
+           <value compset=".+" grid="a%ne120np4.pg2">192</value>
+           <value compset=".+" grid="a%ne120np4.pg3">192</value>
+           <value compset=".+" grid="a%ne120np4.pg4">192</value>
+           <value compset=".+" grid="a%ne240np4">384</value>
+           <value compset=".+" grid="a%ne240np4.pg2">384</value>
+           <value compset=".+" grid="a%ne240np4.pg3">384</value>
+           <value compset=".+" grid="a%ne0np4CONUS.ne30x8">144</value>
+           <value compset=".+" grid="a%ne0np4.China01.ne30x8">144</value>   <======= ADD THIS!
+           <value compset=".+" grid="a%T42">72</value>
+           <value compset=".+" grid="a%T85">144</value>
+           <value compset=".+" grid="a%T341">288</value>
+           <value compset=".+" grid="1x1">48</value>
+           <value compset=".+" grid="1x1_urbanc">48</value>
+           <value compset=".+" grid="1x1_mexico">24</value>
+           <value compset=".+" grid="1x1_vancou">24</value>
+           <value compset="_DLND.*_CISM\d">1</value>
+           <value compset="_DATM.*_DICE.*_POP2.*_WW3">4</value>
+           <value compset="_DATM.*_DICE.*_POP2.*_DWAV">4</value>
+         </values>
+         <group>run_coupling</group>
+         <file>env_run.xml</file>
+         <desc>Number of atm coupling intervals per NCPL_BASE_PERIOD.
+         This is used to set the driver namelist atm_cpl_dt, equal to basedt/ATM_NCPL,
+         where basedt is equal to NCPL_BASE_PERIOD in seconds.</desc>
+       </entry>
+
+     
+  =====================================================================================
+  (3) Add grid information to ($CESM)/components/cam/bld/config_files/horiz_grid.xml
+  =====================================================================================
+       Add an entry to set the number of gridpoints, etc for the new grid.
+
+        <horiz_grid dyn="se" hgrid="ne0np4.China01.ne30x8" ncol="251534" csne="0" csnp="4" npg="0" />
+
+
+  =====================================================================================
+  (4) Add grid information to ($CESM)/components/cam/bld/namelist_files/namelist_defaults_cam.xml
+  =====================================================================================
+      Set namelist default entries for this grid:   
+
+        <dtime dyn="se"    hgrid="ne0np4.China01.ne30x8">600</dtime> 
+
+        <ncdata dyn="se" hgrid="ne0np4.China01.ne30x8"  nlev="32"  ic_ymd="101" >/path/to/my/repo/ne0np4.China01.ne30x8/inic/cami-mam4_0000-01-01_ne0np4.China01.ne30x8_L32.nc</ncdata>
+
+        <bnd_topo hgrid="ne0np4.China01.ne30x8"  >/path/to/my/repo/ne0np4.China01.ne30x8/topo/topo_ne0np4.China01.ne30x8_blin_190813.nc</bnd_topo>
+
+        <se_mesh_file hgrid="ne0np4.China01.ne30x8">/path/to/my/repo/ne0np4.China01.ne30x8/grids/China01_ne30x8_EXODUS.nc</se_mesh_file>
+
+        <drydep_srf_file hgrid="ne0np4.China01.ne30x8">/path/to/my/repo/ne0np4.China01.ne30x8/atmsrf/atmsrf_ne0np4.China01.ne30x8_190813.nc</drydep_srf_file>
+
+        <se_fine_ne hgrid="ne0np4.China01.ne30x8" > 240 </se_fine_ne>
+
+        <se_hypervis_subcycle  hgrid="ne0np4.China01.ne30x8"> 10 </se_hypervis_subcycle>
+
+        <se_nsplit hgrid="ne0np4.China01.ne30x8"> 6 </se_nsplit>
+
+        <se_nu_div se_refined_mesh="1" hypervis_type="scalar" hgrid="ne0np4.China01.ne30x8" > 1.0000e13 </se_nu_div>
+
+        <se_nu_p se_refined_mesh="1" hypervis_type="scalar" hgrid="ne0np4.China01.ne30x8" > 1.0000e13 </se_nu_p>
+
+        <se_nu_top hgrid="ne0np4.China01.ne30x8"> 1.0e5 </se_nu_top>
+
+        <se_refined_mesh hgrid="ne0np4.China01.ne30x8" > .true. </se_refined_mesh>
+
+        <se_rsplit hgrid="ne0np4.China01.ne30x8"> 4 </se_rsplit>
+
+        <focndomain hgrid="ne0np4.China01.ne30x8"  >/path/to/my/repo/ne0np4.China01.ne30x8/domains/domain.ocn.ne0np4.China01.ne30x8_gx1v7.190813.nc</focndomain>
+
+
+  =====================================================================================
+  (5) Add grid information to ($CESM)/components/clm/bld/namelist_files/namelist_definition_clm4_5.xml
+  =====================================================================================
+       Add the new grid to the "res" list:
+
+        <entry id="res" type="char*30" category="default_settings" group="default_settings"  valid_values= "512x1024,360x720cru,128x256,64x128,48x96,32x64,8x16,94x192,0.23x0.31,0.47x0.63,0.9x1.25,1.9x2.5,2.5x3.33,4x5,10x15,5x5_amazon,1x1_camdenNJ,1x1_vancouverCAN,1x1_mexicocityMEX,1x1_asphaltjungleNJ,1x1_brazil,1x1_urbanc_alpha,1x1_numaIA,1x1_smallvilleIA,0.1x0.1,0.25x0.25,0.5x0.5,3x3min,5x5min,10x10min,0.33x0.33,0.125x0.125,ne4np4,ne16np4,ne30np4,ne60np4,ne120np4,ne240np4,ne0np4.China01.ne30x8,1km-merge-10min">
+Horizontal resolutions Note: 0.1x0.1, 0.25x0.25, 0.5x0.5, 5x5min, 10x10min, 3x3min and 0.33x0.33 are only used for CLM tools
+        </entry>
+
+
+  =====================================================================================
+  (6) Add grid information to ($CESM)/components/clm/bld/namelist_files/namelist_defaults_clm4_5.xml
+  =====================================================================================
+    
+     ---------------------
+     * Add fsurdat entries:
+     ---------------------
+        <fsurdat hgrid="ne0np4.China01.ne30x8"    sim_year="2000" use_crop=".false." irrigate=".true.">
+        /path/to/my/repo/ne0np4.China01.ne30x8/clm_surfdata_5_0/surfdata_ne0np4.China01.ne30x8_hist_16pfts_Irrig_CMIP6_simyr2000_c190813.nc</fsurdat>
+
+        <fsurdat hgrid="ne0np4.China01.ne30x8"     sim_year="1850" use_crop=".false." irrigate=".true.">
+        /path/to/my/repo/ne0np4.China01.ne30x8/clm_surfdata_5_0/surfdata_ne0np4.China01.ne30x8_hist_16pfts_Irrig_CMIP6_simyr1850_c190813.nc</fsurdat>
+
+     ----------------------------------
+     * Add flanduse_timeseries entry:
+     ----------------------------------
+        <flanduse_timeseries hgrid="ne0np4.China01.ne30x8"      sim_year_range="1850-2000"  irrigate=".true."
+         use_crop=".false."  >/path/to/my/repo/ne0np4.China01.ne30x8/clm_surfdata_5_0/landuse.timeseries_ne0np4.China01.ne30x8_hist_16pfts_Irrig_CMIP6_simyr1850-2015_c190813.nc</flanduse_timeseries>
+
+
+  =====================================================================================
+  (7) Either modify Add grid information to ($CESM)/cime/src/drivers/mct/cime_config/config_component.xml
+      *OR* set EPS_AAREA = 1.0e-4  in env_run.xml
+  =====================================================================================
+
+
+
+
+ Once these modifications have been made, the model is configured for the new VRM grid, but
+ it will not yet work. For Cheyenne, because of an update to the MPI libraries, the release
+ model will not run out-of-the-box. 
+
+   Edit: ($CESM)/cime/config/cesm/machines/config_machines.xml
+
+   for the cheyenne entry, the order of arguments for the 'mpiexec_mpt' must 
+   be switched:
+  
+   The original entry:
+         <mpirun mpilib="default">
+           <executable>mpiexec_mpt</executable>
+           <arguments>
+             <arg name="anum_tasks"> -np {{ total_tasks }}</arg>
+             <arg name="labelstdout">-p "%g:"</arg>
+             <!-- the omplace argument needs to be last -->
+             <arg name="zthreadplacement"> omplace -tm open64 </arg>
+           </arguments>
+         </mpirun>
+
+    Must be changed to: 
+         <mpirun mpilib="default">
+           <executable>mpiexec_mpt</executable>
+           <arguments>
+             <arg name="labelstdout">-p "%g:"</arg>
+             <arg name="anum_tasks"> -np {{ total_tasks }}</arg>
+             <!-- the omplace argument needs to be last -->
+             <arg name="zthreadplacement"> omplace -tm open64 </arg>
+           </arguments>
+         </mpirun>
+
+ After this is fixed, the model must be modified in 2 ways to allow the SE dycore
+ to run in non-aquaplanet configurations:
+
+   (1) Edit: ($CESM)/components/cam/bld/build-namelist
+
+       Comment out the lines that prevent the use of topography for SE runs:
+
+--------------------------------------------------
+    ## topography not supported for CESM2.0
+#     if (!defined $use_topo_file or ($use_topo_file =~ m/$TRUE/io)) {
+#       die "$ProgName - ERROR: Use of topography not currently supported with SE dycore\n";
+#     }
+--------------------------------------------------
+
+   (2) Replace ($CESM)/components/cam/src/dynamics/se/dyn_comp.F90  with 
+       the provided module 'dyn_comp-CORRECTED.F90' which will read in and use topography values.
+
+
+ Now create a new case to runa 5 day test using the VRM grid
+
+
+   - Create newcase:
+
+    ./create_newcase --case <PATH>/f.e2.1.0.China01-Test_01 --res ne0np4.China01.ne30x8_mg17 --compset FHIST --mach cheyenne --run-unsupported
+
+   - Set pelayout for case:
+       cheyenne> ./pelayout 
+        Comp  NTASKS  NTHRDS  ROOTPE
+        CPL :     36/     1;      0
+        ATM :     36/     1;      0
+        LND :     36/     1;      0
+        ICE :     36/     1;      0
+        OCN :     36/     1;      0
+        ROF :     36/     1;      0       ( on cheyenne, these default values will not work )
+        GLC :     36/     1;      0
+        WAV :     36/     1;      0
+        ESP :      1/     1;      0
+
+       cheyenne> ./xmlchange NTASKS_ATM=1080
+       cheyenne> ./xmlchange NTASKS_CPL=1080
+       cheyenne> ./xmlchange NTASKS_LND=1080
+       cheyenne> ./xmlchange NTASKS_ICE=1080
+       cheyenne> ./xmlchange NTASKS_OCN=1080
+       cheyenne> ./xmlchange NTASKS_ROF=1080
+       cheyenne> ./xmlchange NTASKS_GLC=1080
+       cheyenne> ./xmlchange NTASKS_WAV=1080
+
+       cheyenne> ./pelayout
+        Comp  NTASKS  NTHRDS  ROOTPE
+        CPL :   1080/     1;      0
+        ATM :   1080/     1;      0
+        LND :   1080/     1;      0
+        ICE :   1080/     1;      0
+        OCN :   1080/     1;      0
+        ROF :   1080/     1;      0
+        GLC :   1080/     1;      0
+        WAV :   1080/     1;      0
+        ESP :      1/     1;      0
+
+
+   - Set up case:
+
+       cheyenne> ./case.setup 
+
+   - Set EPS_AAREA [if not done in (7) above]:
+
+       <entry id="EPS_AAREA" value="1.0e-04">
+          <type>real</type>
+          <desc>Error tolerance for differences in atm/land areas in domain checking</desc>
+        </entry>
+
+   - Set env_batch.xml for runs, set user_nl_cam values for outputs, build that model! , submit that model!.
+
+      ./case.build
+      ./case.submit
+
+
+ The default SE namelist values set up above work for the 5 day test on Cheyenne. Values may need to 
+ be tuned for a different machine or to address deviant model behavior that shows up in postprocessed 
+ model results. These can be adjusted in user_nl_cam.
+
+ For general use, the model should be run for some period of time (minimum ~6 months), to spin up the 
+ land and for the model to equilibrate. The restart files from this run then should be used to start
+ meaningful model experiments. 
+
+

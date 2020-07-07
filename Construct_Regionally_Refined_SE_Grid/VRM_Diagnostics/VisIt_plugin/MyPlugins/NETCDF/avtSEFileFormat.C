@@ -1,0 +1,690 @@
+/*****************************************************************************
+*
+* Copyright (c) 2000 - 2015, Lawrence Livermore National Security, LLC
+* Produced at the Lawrence Livermore National Laboratory
+* LLNL-CODE-442911
+* All rights reserved.
+*
+* This file is  part of VisIt. For  details, see https://visit.llnl.gov/.  The
+* full copyright notice is contained in the file COPYRIGHT located at the root
+* of the VisIt distribution or at http://www.llnl.gov/visit/copyright.html.
+*
+* Redistribution  and  use  in  source  and  binary  forms,  with  or  without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of  source code must  retain the above  copyright notice,
+*    this list of conditions and the disclaimer below.
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this  list of  conditions  and  the  disclaimer (as noted below)  in  the
+*    documentation and/or other materials provided with the distribution.
+*  - Neither the name of  the LLNS/LLNL nor the names of  its contributors may
+*    be used to endorse or promote products derived from this software without
+*    specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT  HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR  IMPLIED WARRANTIES, INCLUDING,  BUT NOT  LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS FOR A PARTICULAR  PURPOSE
+* ARE  DISCLAIMED. IN  NO EVENT  SHALL LAWRENCE  LIVERMORE NATIONAL  SECURITY,
+* LLC, THE  U.S.  DEPARTMENT OF  ENERGY  OR  CONTRIBUTORS BE  LIABLE  FOR  ANY
+* DIRECT,  INDIRECT,   INCIDENTAL,   SPECIAL,   EXEMPLARY,  OR   CONSEQUENTIAL
+* DAMAGES (INCLUDING, BUT NOT  LIMITED TO, PROCUREMENT OF  SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF  USE, DATA, OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER
+* CAUSED  AND  ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT
+* LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING IN ANY  WAY
+* OUT OF THE  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+* DAMAGE.
+*
+*****************************************************************************/
+
+#include <vector>
+#include <snprintf.h>
+#include <netcdf.h>
+#include <DebugStream.h>
+
+#include <avtSEFileFormat.h>
+#include <avtSEReader.h>
+
+#include <NETCDFFileObject.h>
+
+#include <avtDatabaseMetaData.h>
+#include <avtMTSDFileFormatInterface.h>
+#include <avtSTSDFileFormatInterface.h>
+
+// ****************************************************************************
+// Method: avtSE_MTSD_FileFormat::Identify
+//
+// Purpose: 
+//   Identifies the file as SE having a time dimension.
+//
+// Arguments:
+//   fileObject : The file object used to perform the query.
+//
+// Returns:    True if the file looks like SE MT, false otherwise.
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+bool
+avtSE_MTSD_FileFormat::Identify(NETCDFFileObject *fileObject)
+{
+    bool isSEMT = false;
+    size_t sz;
+    if(fileObject->GetDimensionInfo("time", &sz))
+    {
+       size_t colSize = 0, elemSize = 0;
+       bool hasCols = fileObject->GetDimensionInfo("ncol" ,  &colSize);
+       bool hasElem = fileObject->GetDimensionInfo("nelem", &elemSize);
+
+       isSEMT = (sz > 0 && ((hasCols && colSize > 1) || (hasElem && elemSize > 1)));
+    }
+    return isSEMT;
+}
+
+// ****************************************************************************
+//  Method: SECommonPluginInfo::SetupSEDatabase
+//
+//  Purpose:
+//      Sets up a SE MT database.
+//
+//  Arguments:
+//      list    A list of file names.
+//      nList   The number of timesteps in list.
+//      nBlocks The number of blocks in the list.
+//
+//  Returns:    A SE MT database from list.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sept 22 2016
+//
+//  Modifications:
+//
+// ****************************************************************************
+
+avtFileFormatInterface *
+avtSE_MTSD_FileFormat::CreateInterface(NETCDFFileObject *f,
+    const char *const *list, int nList, int nBlock)
+{
+    int nTimestepGroups = nList / nBlock;
+    avtMTSDFileFormat ***ffl = new avtMTSDFileFormat**[nTimestepGroups];
+    for (int i = 0 ; i < nTimestepGroups ; i++)
+    {
+        ffl[i] = new avtMTSDFileFormat*[nBlock];
+        for (int j = 0 ; j < nBlock ; j++)
+        {
+            if(f != 0)
+            {
+                ffl[i][j] = new avtSE_MTSD_FileFormat(list[i*nBlock+j], f);
+                f = 0;
+            }
+            else
+                ffl[i][j] = new avtSE_MTSD_FileFormat(list[i*nBlock+j]);
+        }
+    }
+    return new avtMTSDFileFormatInterface(ffl, nTimestepGroups, nBlock);
+}
+
+// ****************************************************************************
+//  Method: avtSE_MTSD_FileFormat constructor/destructor
+//
+//  Programmer: patc -- generated by xml2avt
+//  Creation:   Tue Sep 20 16:03:35 PST 2016
+//
+// ****************************************************************************
+
+avtSE_MTSD_FileFormat::avtSE_MTSD_FileFormat(const char *filename) : 
+    avtMTSDFileFormat(&filename, 1)
+{
+    reader = new avtSEReader(filename);
+}
+
+avtSE_MTSD_FileFormat::avtSE_MTSD_FileFormat(const char *filename, NETCDFFileObject *obj) : 
+    avtMTSDFileFormat(&filename, 1)
+{
+    reader = new avtSEReader(filename, obj);
+}
+
+avtSE_MTSD_FileFormat::~avtSE_MTSD_FileFormat()
+{
+    delete reader;
+}
+
+// ****************************************************************************
+//  Method: avtSE_MTSD_FileFormat::GetCycles,GetTimes,GetNTimesteps
+//
+//  Purpose:
+//      Tells the rest of the code about the time steps in this file.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+void
+avtSE_MTSD_FileFormat::GetCycles(std::vector<int> &cycles)
+{
+    reader->GetCycles(cycles);
+}
+
+void
+avtSE_MTSD_FileFormat::GetTimes(std::vector<double> &times)
+{
+    reader->GetTimes(times);
+}
+
+int
+avtSE_MTSD_FileFormat::GetNTimesteps(void)
+{
+    return reader->GetNTimesteps();
+}
+
+// ****************************************************************************
+//  Method: avtSEFileFormat::FreeUpResources
+//
+//  Purpose:
+//      When VisIt is done focusing on a particular timestep, it asks that
+//      timestep to free up any resources (memory, file descriptors) that
+//      it has associated with it.  This method is the mechanism for doing
+//      that.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+void
+avtSE_MTSD_FileFormat::FreeUpResources(void)
+{
+    //reader->FreeUpResources();
+}
+
+// ****************************************************************************
+//  Method: avtSE_MTSD_FileFormat::GetMesh
+//
+//  Purpose:
+//      Gets the mesh associated with this file.  The mesh is returned as a
+//      derived type of vtkDataSet (ie vtkRectilinearGrid, vtkStructuredGrid,
+//      vtkUnstructuredGrid, etc).
+//
+//  Arguments:
+//      timestate   The index of the timestate.  If GetNTimesteps returned
+//                  'N' time steps, this is guaranteed to be between 0 and N-1.
+//      meshname    The name of the mesh of interest.  This can be ignored if
+//                  there is only one mesh.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+vtkDataSet *
+avtSE_MTSD_FileFormat::GetMesh(int timeState, const char *meshname)
+{
+    return reader->GetMesh(timeState, meshname);
+}
+
+// ****************************************************************************
+//  Method: avtSE_MTSD_FileFormat::GetVar
+//
+//  Purpose:
+//      Gets a scalar variable associated with this file.  Although VTK has
+//      support for many different types, the best bet is vtkFloatArray, since
+//      that is supported everywhere through VisIt.
+//
+//  Arguments:
+//      timestate  The index of the timestate.  If GetNTimesteps returned
+//                 'N' time steps, this is guaranteed to be between 0 and N-1.
+//      varname    The name of the variable requested.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+vtkDataArray *
+avtSE_MTSD_FileFormat::GetVar(int timeState, const char *varname)
+{
+    return reader->GetVar(timeState, varname);
+}
+
+// ****************************************************************************
+//  Method: avtSE_MTSD_FileFormat::GetVectorVar
+//
+//  Purpose:
+//      Gets a Vector variable associated with this file.  Although VTK has
+//      support for many different types, the best bet is vtkFloatArray, since
+//      that is supported everywhere through VisIt.
+//
+//  Arguments:
+//      timestate  The index of the timestate.  If GetNTimesteps returned
+//                 'N' time steps, this is guaranteed to be between 0 and N-1.
+//      varname    The name of the variable requested.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+vtkDataArray *
+avtSE_MTSD_FileFormat::GetVectorVar(int timeState, const char *varname)
+{
+    return reader->GetVectorVar(timeState, varname);
+}
+
+// ****************************************************************************
+//  Method: avtSEFileFormat::PopulateDatabaseMetaData
+//
+//  Purpose:
+//      This database meta-data object is like a table of contents for the
+//      file.  By populating it, you are telling the rest of VisIt what
+//      information it can request from you.
+//
+//  Programmer: Patrick Callaghan
+//  Creation:   Sep 22 2016
+//
+// ****************************************************************************
+
+void
+avtSE_MTSD_FileFormat::PopulateDatabaseMetaData(avtDatabaseMetaData *md, int timeState)
+{
+    reader->PopulateDatabaseMetaData(timeState, md);
+    if(md != 0)
+    {
+         md->SetDatabaseComment(std::string("Read using SE MT NETCDF reader\n") + md->GetDatabaseComment());
+         md->SetReplacementMask(-1);
+    }
+}
+
+// ****************************************************************************
+// Method: avtSE_MTSD_FileFormat::GetAuxiliaryData
+//
+// Purpose: 
+//   Gets the material object for the given mesh.
+//
+// Arguments:
+//
+// Returns:    
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 24 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+void *
+avtSE_MTSD_FileFormat::GetAuxiliaryData(const char *var , int ts,
+                                        const char *type, void *args, 
+                                        DestructorFunction &df)
+{
+  return reader->GetAuxiliaryData(var, ts, type, args, df);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+///                            ST FILE FORMAT
+////////////////////////////////////////////////////////////////////////////////
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::Identify
+//
+// Purpose: 
+//   Identifies the file as SE not having a time dimension.
+//
+// Arguments:
+//   fileObject : The file object used to perform the query.
+//
+// Returns:    True if the file looks like SE ST, false otherwise.
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+bool
+avtSE_STSD_FileFormat::Identify(NETCDFFileObject *fileObject)
+{
+    bool isSEST = false;
+    size_t sz;
+    if(!fileObject->GetDimensionInfo("time", &sz))
+    {
+       size_t colSize = 0, elemSize = 0;
+       bool hasCols = fileObject->GetDimensionInfo("ncol" ,  &colSize);
+       bool hasElem = fileObject->GetDimensionInfo("nelem", &elemSize);
+    
+       isSEST = ((hasCols && colSize > 1) || (hasElem && elemSize > 1));
+    }
+    return isSEST;
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::CreateInterface
+//
+// Purpose: 
+//   Creates the STSD file format interface for this reader.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+avtFileFormatInterface *
+avtSE_STSD_FileFormat::CreateInterface(NETCDFFileObject *f, 
+    const char *const *list, int nList, int nBlock)
+{
+    avtSTSDFileFormat ***ffl = new avtSTSDFileFormat**[nList];
+    int nTimestep = nList / nBlock;
+
+    for (int i = 0 ; i < nTimestep ; i++)
+    {
+        ffl[i] = new avtSTSDFileFormat*[nBlock];
+        for (int j = 0 ; j < nBlock ; j++)
+        {
+            if(f != 0)
+            {
+                ffl[i][j] = new avtSE_STSD_FileFormat(list[i*nBlock + j], f);
+                f = 0;
+            }
+            else
+                ffl[i][j] = new avtSE_STSD_FileFormat(list[i*nBlock + j]);
+        }
+    }
+
+    return new avtSTSDFileFormatInterface(ffl, nTimestep, nBlock);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::avtSE_STSD_FileFormat
+//
+// Purpose: 
+//   Constructor for the avtSE_STSD_FileFormat class.
+//
+// Arguments:
+//   filename : The name of the file being read.
+//   f        : The file object associated with the file being read.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//
+// ****************************************************************************
+
+avtSE_STSD_FileFormat::avtSE_STSD_FileFormat(const char *filename) :
+    avtSTSDFileFormat(filename)
+{
+    reader = new avtSEReader(filename);
+}
+
+avtSE_STSD_FileFormat::avtSE_STSD_FileFormat(const char *filename,
+    NETCDFFileObject *f) : avtSTSDFileFormat(filename)
+{
+    reader = new avtSEReader(filename, f);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::~avtSE_STSD_FileFormat
+//
+// Purpose: 
+//   Destructor for the avtSE_STSD_FileFormat class.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+avtSE_STSD_FileFormat::~avtSE_STSD_FileFormat()
+{
+    delete reader;
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::FreeUpResources
+//
+// Purpose: 
+//   Frees up the resources.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+void
+avtSE_STSD_FileFormat::FreeUpResources()
+{
+    reader->FreeUpResources();
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetCycleFromFilename
+//
+// Purpose: 
+//   Make it guess the cycle from the filename.
+//
+// Returns:    The cycle.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+int
+avtSE_STSD_FileFormat::GetCycleFromFilename(const char *f) const
+{
+    return GuessCycle(f);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetCycle
+//
+// Purpose: 
+//   Get the cycle from the file
+//
+// Returns:    The time
+//
+// Programmer: Patrick Callaghan
+// Creation:   Spet 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+int
+avtSE_STSD_FileFormat::GetCycle()
+{
+    intVector cycles;
+    reader->GetCycles(cycles);
+    return (cycles.size() > 0) ? cycles[0] : avtFileFormat::INVALID_CYCLE;
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetTime
+//
+// Purpose: 
+//   Get the time from the file
+//
+// Returns:    The time
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+double
+avtSE_STSD_FileFormat::GetTime()
+{
+    doubleVector times;
+    reader->GetTimes(times);
+    return (times.size() > 0) ? times[0] : avtFileFormat::INVALID_TIME;
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::ActivateTimestep
+//
+// Purpose: 
+//   Activates the time step.
+//
+// Programmer: Patrick Callghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//
+// ****************************************************************************
+
+void
+avtSE_STSD_FileFormat::ActivateTimestep()
+{
+    debug4 << "avtSE_STSD_FileFormat::ActivateTimestep" << endl;
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::PopulateDatabaseMetaData
+//
+// Purpose: 
+//   Populates the metadata from information in the file.
+//
+// Arguments:
+//   md : The metadata object to populate.
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//
+// ****************************************************************************
+
+void
+avtSE_STSD_FileFormat::PopulateDatabaseMetaData(avtDatabaseMetaData *md)
+{
+    reader->PopulateDatabaseMetaData(0, md);
+    if(md != 0)
+    {
+         md->SetDatabaseComment(std::string("Read using SE ST NETCDF reader\n") + md->GetDatabaseComment());
+         md->SetReplacementMask(-1);
+    }
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetMesh
+//
+// Purpose: 
+//   Returns the specified mesh.
+//
+// Arguments:
+//   var : The name of the mesh to create.
+//
+// Returns:    A vtkDataSet containing the mesh or 0.
+// 
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+// ****************************************************************************
+
+vtkDataSet *
+avtSE_STSD_FileFormat::GetMesh(const char *var)
+{
+    return reader->GetMesh(0, var);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetVar
+//
+// Purpose: 
+//   Returns the data for the specified variable.
+//
+// Arguments:
+//   var : The name of the variable to read.
+//
+// Returns:    The data or 0.
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//
+// ****************************************************************************
+
+vtkDataArray *
+avtSE_STSD_FileFormat::GetVar(const char *var)
+{
+    return reader->GetVar(0, var);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetVectorVar
+//
+// Purpose: 
+//   Returns the Vector data for the specified variable.
+//
+// Arguments:
+//   var : The name of the variable to read.
+//
+// Returns:    The data or 0.
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 22 2016
+//
+// Modifications:
+//
+// ****************************************************************************
+
+vtkDataArray *
+avtSE_STSD_FileFormat::GetVectorVar(const char *var)
+{
+    return reader->GetVectorVar(0, var);
+}
+
+// ****************************************************************************
+// Method: avtSE_STSD_FileFormat::GetAuxiliaryData
+//
+// Purpose: 
+//   Gets the material object for the given mesh.
+//
+// Arguments:
+//
+// Returns:    
+//
+// Note:       
+//
+// Programmer: Patrick Callaghan
+// Creation:   Sept 24 2016
+//
+// Modifications:
+//   
+// ****************************************************************************
+
+void *
+avtSE_STSD_FileFormat::GetAuxiliaryData(const char  *var,
+                                        const char *type, 
+                                        void       *args, 
+                                        DestructorFunction &df)
+{
+  return reader->GetAuxiliaryData(var, 0, type, args, df);
+}
+

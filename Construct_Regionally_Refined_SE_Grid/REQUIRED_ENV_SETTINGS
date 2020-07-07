@@ -1,0 +1,31 @@
+
+
+-----------------------------------------
+ Environment Variable the must be set:
+-----------------------------------------
+
+setenv VRM_CESM_TAG  = "/path/to/cesm/tag/"
+setenv VRM_REPO_PATH = "/path/to/my/repo/"
+setenv VRM_GRID_TAG  = "NEWGRIDNAME_neZZxRR"
+setenv VRM_GRID_NAME = "ne0np4.NEWGRIDNAME.neZZxRR"
+setenv VRM_GRID_NCOL = "NNNNNN"
+setenv VRM_DATE      = "YYMMDD"
+
+
+These environment variables are used to generate scripts to 
+create and install a new VRM grid. In each of the gen_*** 
+and Install_grid directories there is a MAKE_* script. Once the
+environment variables are set, the user needs to cd the each 
+directory and run this script, which will generate the needed 
+shell and ncl programs. After reviewing the generated scripts
+to ensure that the VRM grid values have been set correctly, the
+user just needs to submit/run the scripts and verify that they 
+completed successfully. 
+
+VRM_CESM_TAG:  Path to the CESM tag in which the needed CAM/CLM tools have ben compiled.
+VRM_REPO_TAG:  Path to repository where VRM grids are to be stored.
+VRM_GRID_TAG:  The Name in the indicated format used for EXODUS/SCRIP/LATLON filenames.
+VRM_GRID_NAME: The Gridname used in CESM with the indicated format.
+VRM_GRID_NCOL: The number of unique gridpoints (see LATLON file for the value).
+VRM_DATE:      Date Stamp to be used for all files created. 
+

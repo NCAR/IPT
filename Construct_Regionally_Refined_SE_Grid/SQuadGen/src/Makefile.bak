@@ -1,0 +1,57 @@
+# Compiler and flags
+#CC= icpc
+CC= g++
+
+# NETCDF library directories
+#NETCDF_INCLUDEDIR=/opt/local/include
+#NETCDF_LIBDIR=/opt/local/lib
+#NETCDF_INCLUDEDIR= /usr/local/netcdf-c-4.6.1-f-4.4.4-gcc-g++-gfortran-8.1.0/include
+#NETCDF_LIBDIR= /usr/local/netcdf-c-4.6.1-f-4.4.4-gcc-g++-gfortran-8.1.0/lib
+#NETCDF_INCLUDEDIR=/glade/u/apps/ch/opt/netcdf/4.4.1.1/intel/17.0.1/include
+#NETCDF_LIBDIR=/glade/u/apps/ch/opt/netcdf/4.4.1.1/intel/17.0.1/lib
+
+# Library files to include
+LDFILES= -lnetcdf -lnetcdf_c++
+
+# Local files
+FILES= SQuadGen.cpp \
+	   GridElements.cpp \
+	   CSRefinementMap.cpp \
+       CubedSphereGrid.cpp \
+	   IcosahedralFlagGrid.cpp \
+	   RefineGrid.cpp \
+       RefinementTemplateCUBIT.cpp \
+	   RefinementTemplateLOWCONN.cpp \
+	   RefinementTemplateLOWCONNOLD.cpp \
+       SpringDynamics.cpp \
+       Tessellate.cpp\
+       lodepng.cpp
+
+# Load system-specific defaults
+CFLAGS+= -I$(NETCDF_INCLUDEDIR)
+LDFLAGS+= -L$(NETCDF_LIBDIR)
+
+include Make.defs
+
+##
+## Build instructions
+##
+SQuadGen: $(FILES:%.cpp=$(BUILDDIR)/%.o)
+	$(CC) $(LDFLAGS) -o $@ $(FILES:%.cpp=$(BUILDDIR)/%.o) $(LDFILES)
+	mv SQuadGen ..
+
+##
+## Clean
+##
+clean:
+	rm -rf $(DEPDIR)
+	rm -rf $(BUILDDIR)
+
+##
+## Include dependencies
+##
+include $(FILES:%.cpp=$(DEPDIR)/%.d)
+
+# DO NOT DELETE
+
+GridElements.o: GridElements.h Exception.h
