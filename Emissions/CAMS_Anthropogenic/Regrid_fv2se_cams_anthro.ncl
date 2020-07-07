@@ -2,24 +2,18 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/esmf/ESMF_regridding.ncl"
-;;;;;load "ESMF_regridding.ncl"
 
 begin
 
-  ; Interpolate FV output values to SE grid for use as 
-  ; Nudging source data. 
+  ; Interpolate FV grid to SE grid 
   ;
-  ; ASSUMPTIONS: (1) data are stored in "h1" files
-  ;              (2) U and V values are in the FV files on the regulate grid
-  ;                  (not US/VS on staggered grids)
-  ;              (3) date and datsec values in the FV file provide the date/time 
-  ;                  values needed to construct the SE filenames.
-  ;              (4) The input arrays are ordered so that lat/lon are the 2
-  ;                  fastest varying indices.
+  ; ASSUMPTIONS: for regridding CAMS 0.1 deg emissions files
+  ;    CAMS emissions files have multiple variables: 
+  ;         for each emissions sector AND the sum of all sectors
   ;
   ;    *** ESMF problems in NCL:
-  ;              (1) The 'current' version of ESMF_regrid_with_weight for 'consrvative'
-  ;                  interpolation doen not work properly for arrays with more dimensions
+  ;              (1) The 'current' version of ESMF_regrid_with_weight for 'conservative'
+  ;                  interpolation does not work properly for arrays with more dimensions
   ;                  than (lat,lon) --> (ncol)
   ;              (2) The areas (corners) from 'rectilinear_to_SCRIP' are crap for wrap 
   ;                  arround longitudes. 
@@ -30,23 +24,34 @@ begin
   ;          ** Explicilty load Lat,Lon data with wrap arounds and interpolate at each 
   ;             level when mapping to SE. 
   ;             
+  ; USAGE: ncl Regrid_fv2se_cams_anthro.ncl
   ;------------------------------------------------------------------------------
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  USER CHANGES START
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+  ; Directory to read grid defintions
   grid_dir ="/glade/work/tilmes/refgrids/"
-  wght_dir ="/glade/work/tilmes/regrid/Grid_Weights/"
-  ingrid   = "f09"
- ; outgrid   = "f09"
-   outgrid   = "ne30np4"
- ;  outgrid   = "ne30pg3"
-;  outgrid  = "conus_30_x8"
+
+  ; Directory to write new grid weights (change to your directory)
+  wght_dir ="/glade/scratch/emmons/emis/Grid_Weights/"
+
+  ; Type of interpolation
   interp   = "conserve"
-  srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
-  ;dstPath = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30/"
-  dstPath = "/glade/scratch/tilmes/emissions/cams/ne30np4/"
-  ;dstPath = "/glade/scratch/tilmes/emissions/cams/ne30pg3/"
+
+  ; Resolution of original file (for weight filename)
+  ingrid   = "0.1x0.1"
+
+  ; Resolution of new grid
+  outgrid   = "ne30np4"
+  ;outgrid   = "ne30pg3"
+  ;outgrid  = "conus_30_x8"
+
+  ; Directory of original emissions files - all files will be processed
+  ;srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
+  srcPath = "/glade/scratch/emmons/emis/cams/"
+
+  ; Directory for new files
+  dstPath = "/glade/scratch/emmons/emis/cams_ne30np4/"
 
   ; Set output grid file and set coordinate values
   ;   SE needs to use info from pentagons file.
@@ -69,24 +74,6 @@ begin
 ;  USER CHANGES END 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
-  ; Sanity check
-  ;---------------
-;  if(.not. isfilepresent(srcPath)) then
-;    print(" ")
-;    print("ERROR: Source Data Path Does Not Exist")
-;    print(" ")
-;    exit
-;  end if
-;  if(.not. isfilepresent(dstPath)) then
-;    print(" ")
-;    print("ERROR: Destination Path Does Not Exist")
-;    print("ERROR: I REFUSE To Create it For You! ")
-;    print(" ")
-;    exit
-;  end if
-
   ; Set some constants for readability
   ;------------------------------------
   COPY    = 0
@@ -95,17 +82,15 @@ begin
   SLICE   = 3
   NONE    = 4
 
-  ; Get the list of FV filenames to process
+  ; Get the list of original CAMS 0.1deg filenames to process
   ;------------------------------------------
-;;;;  syscmd = "(cd "+srcPath+" ; ls -1 *h1*)"
-   syscmd = "(cd "+srcPath+" ; ls -1 CAMS-GLOB-ANT_Glb_0.1x0.1_anthro_*.nc)"
+  syscmd = "(cd "+srcPath+" ; ls -1 CAMS-GLOB-ANT_Glb_0.1x0.1_anthro_*.nc)"
   Flist = systemfunc(syscmd)
   Fnum  = dimsizes(Flist)
   print(" ")
   print(" Number of files to process="+Fnum)
   print(" ")
   print(Flist)
-
 
   if(isfilepresent(dstGridName)) then
     dstGrid = addfile(dstGridName,"r")
@@ -128,7 +113,7 @@ begin
     exit
   end if
 
-  ; Open the first input file adn read in lat/lon values
+  ; Open the first input file and read in lat/lon values
   ;  to create ESMF grid info.
   ;---------------------------------------------------------
   srcGridName = wght_dir+"SCRIP_"+ingrid+"_cams.nc"
@@ -147,11 +132,6 @@ begin
     srcLonX = srcFile->lon
     srcLat = srcFile->lat
     delete(srcFile)
-    ;*******************************************************************************
-    ; I no longer trust the ESMF routines in ncl! Add enough wrap around points
-    ; so that there is complete coverage over [0.,360.] in longitude and so that 
-    ; rectilinear to SCRIP calculates proper gridpoint areas over that range.
-    ;*******************************************************************************
     srcNlonX=dimsizes(srcLonX)
     srcNlat =dimsizes(srcLat)
     srcNlon = srcNlonX+3
@@ -166,8 +146,6 @@ begin
     ESMFopt@PrintTimings  = False ; True
     ESMFopt@SrcESMF       = False
     ESMFopt@DstESMF       = False
-;    ESMFopt@LLCorner       = (/-90.d ,  0.d/)
-;    ESMFopt@URCorner       = (/ 90.d ,360.d/)
     rectilinear_to_SCRIP(srcGridName,srcLat,srcLon,ESMFopt)
     delete(ESMFopt)
     wrkArray = new( (/ srcNlat, srcNlon /),"double")
@@ -233,15 +211,10 @@ begin
    
   srcNlat    = srcDsize(ind(srcDname .eq. "lat"   ))
   srcNlonX   = srcDsize(ind(srcDname .eq. "lon"   ))
-;  srcNsector = srcDsize(ind(srcDname .eq. "sector"))
   srcNtime   = srcDsize(ind(srcDname .eq. "time"  ))
-  ;srcNbound  = srcDsize(ind(srcDname .eq. "bound" ))
 
   ; Set output dimension names and sizes
   ;-------------------------------------
-;  dstDname = (/ "time" , "ncol"  , "sector"   , "bound"   /)
-;  dstDsize = (/   -1   , dstNcol , srcNsector , srcNbound /)
-;  dstDulim = (/  True  , False   , False      , False     /)
   dstDname = (/ "time" , "ncol"  /)
   dstDsize = (/   -1   , dstNcol  /)
   dstDulim = (/  True  , False    /)
@@ -249,7 +222,6 @@ begin
   ; read in coordinate variables
   ;-------------------------------
   dstTime   = srcFile->time
-;  dstSector = srcFile->sector
 
   ; Get a list a variables in this file
   ;------------------------------------
@@ -258,7 +230,7 @@ begin
 
   ; Construct the output filename
   ;------------------------------------
-  File_out = Flist(s)
+  File_out = outgrid+"_"+Flist(s)
 
   ; Create the output file
   ;----------------------------
@@ -280,9 +252,7 @@ begin
   ; Add Coordinate values
   ;-----------------------
   filevardef(dstFile,"time"  ,typeof(dstTime)  ,getvardims(dstTime)  )
-;  filevardef(dstFile,"sector",typeof(dstSector),getvardims(dstSector))
   filevarattdef(dstFile,"time"  ,dstTime  )
-;  filevarattdef(dstFile,"sector",dstSector) 
       
   ; define SE grid variables
   ;-----------------------------
@@ -299,11 +269,9 @@ begin
     if(str_lower(srcVarNames(nv)).eq."latitude"        ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."longitude"        ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."time"       ) then continue end if
-;   if(str_lower(srcVarNames(nv)).eq."sector"     ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."lat_bnds"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."lon_bnds"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."time_bnds"  ) then continue end if
-;   if(str_lower(srcVarNames(nv)).eq."sector_bnds") then continue end if
 
     ; Get source info for this variable
     ;------------------------------------
@@ -378,7 +346,6 @@ begin
   ; write out SE grid information 
   ;-------------------------------
   dstFile->time   = (/ dstTime   /)  
- ; dstFile->sector = (/ dstSector /)  
   dstFile->lon    =    dstLon  
   dstFile->lat    =    dstLat  
   dstFile->area   =    dstArea 
@@ -392,11 +359,9 @@ begin
     if(str_lower(srcVarNames(nv)).eq."lat"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."lon"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."time"  ) then continue end if
- ;  if(str_lower(srcVarNames(nv)).eq."sector") then continue end if
     if(str_lower(srcVarNames(nv)).eq."lat_bnds"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."lon_bnds"   ) then continue end if
     if(str_lower(srcVarNames(nv)).eq."time_bnds"  ) then continue end if
-   ; if(str_lower(srcVarNames(nv)).eq."sector_bnds") then continue end if
 
     ; Get source info for this variable
     ;------------------------------------
@@ -439,21 +404,14 @@ begin
       dstFile->$srcVarNames(nv)$ = Var
     end if
     if(VarProc.eq.INTERP) then
-      ;*************************************************
-      ; I no longer trust the ESMF routines in ncl!!!
-      ;*************************************************
-
-;; just hard code the CO_em_anthro interp for Simone for now....
-
-      print(" INTERP VAR: "+srcVarNames(nv))
-      Vinterp = new( (/ srcNtime, dstNcol /),"float")
+     print(" INTERP VAR: "+srcVarNames(nv))
+     Vinterp = new( (/ srcNtime, dstNcol /),"float")
      Vinterp!0 = "time"
      Vinterp!1 = "ncol"
 
-      ; Loop over the number of times and sectors 
-      ;--------------------------------------------------
+      ; Loop over the number of times 
+      ;------------------------------
       do nt=0,(srcNtime-1  )
-    ; do ns=0,(srcNsector-1)
         wrkArray(:,:) = wrkArray@_FillValue
         wrkArray(:,1:(srcNlon-3)) = todouble(Var(nt,:,0:(srcNlon-4)))
         wrkArray(:,  0          ) = wrkArray(:,(srcNlon-3))
@@ -461,7 +419,6 @@ begin
         wrkArray(:, (srcNlon-1) ) = wrkArray(:,2)
         a = tofloat(ESMF_regrid_with_weights(wrkArray,wgtGridName,ESMFopt))
         Vinterp(nt,:) = tofloat(ESMF_regrid_with_weights(wrkArray,wgtGridName,ESMFopt))
-     ; end do
       end do
 
       copy_VarAtts(Var,Vinterp)
