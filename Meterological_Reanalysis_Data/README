@@ -1,8 +1,7 @@
-Something should be written here
-Gen_Data_FVdycore
-Gen_MERRA2_fv09_32L_002.orig.csh
-Gen_Data_SEdycore
-Gen_MERRA2_ne30.csh
-Gen_MERRA2_ne30pg3.csh
-Gen_MERRA2_ne0CONUSne30x8_mt12.csh
+
+The processing scripts are slightly different for the two available dycores, so they are 
+contained in separate directories in the IPT repository. In each, there is a README that 
+provides general guidance for setting the script variables for a desired reanalysis product.
+
+
 
