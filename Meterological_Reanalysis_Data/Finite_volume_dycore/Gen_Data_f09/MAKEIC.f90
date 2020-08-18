@@ -2079,17 +2079,21 @@
 ! If above 1st analysis level: quadratic interp
 !
             if    (px .lt. p1 ) then
-              xt         = x1
-
-              tmpt       = ( (px-p1)*(px-p2) )/( (pt-p1)*(pt-p2) )
-              tmp1       = ( (px-pt)*(px-p2) )/( (p1-pt)*(p1-p2) )
-              tmp2       = ( (px-pt)*(px-p1) )/( (p2-pt)*(p2-p1) )
-
-              t_new(k,i,j) = xt*tmpt + x1*tmp1 + x2*tmp2
-!PFC-diag+++
-!!           if(t_new(k,i,j).lt.161.) t_new(k,i,j)=161.
+!==================================================
+!PFC - Here, for nudging, we replace the ORIG quadratic extrapolation 
+!      of Temperature above the highest level, with a constant 
+!      continuation of the value at the top reanalysis level. 
+!--------------------------------------------------
+!              xt         = x1
+!
+!              tmpt       = ( (px-p1)*(px-p2) )/( (pt-p1)*(pt-p2) )
+!              tmp1       = ( (px-pt)*(px-p2) )/( (p1-pt)*(p1-p2) )
+!              tmp2       = ( (px-pt)*(px-p1) )/( (p2-pt)*(p2-p1) )
+!
+!              t_new(k,i,j) = xt*tmpt + x1*tmp1 + x2*tmp2
+!==================================================
               t_new(k,i,j) = x1
-!PFC-diag===
+!==================================================
 
 !
 ! Elseif between "pbot" and analysis surface: linear interp
@@ -2270,17 +2274,21 @@
 ! If above 1st analysis level:  quadratic interp
 !
             if    (px .lt. p1 ) then
-              xt         = ( x1*(p2 - pt) - x2*(p1 - pt) )/(p2 - p1)
-
-              tmpt       = ( (px-p1)*(px-p2) )/( (pt-p1)*(pt-p2) )
-              tmp1       = ( (px-pt)*(px-p2) )/( (p1-pt)*(p1-p2) )
-              tmp2       = ( (px-pt)*(px-p1) )/( (p2-pt)*(p2-p1) )
-
-              xxo(k,i,j) = xt*tmpt + x1*tmp1 + x2*tmp2
-
-!PFC-daig+++
+!==================================================
+!PFC - Here, for nudging, we replace the ORIG quadratic extrapolation 
+!      of U/V above the highest level, with a constant 
+!      continuation of the value at the top reanalysis level. 
+!--------------------------------------------------
+!              xt         = ( x1*(p2 - pt) - x2*(p1 - pt) )/(p2 - p1)
+!
+!              tmpt       = ( (px-p1)*(px-p2) )/( (pt-p1)*(pt-p2) )
+!              tmp1       = ( (px-pt)*(px-p2) )/( (p1-pt)*(p1-p2) )
+!              tmp2       = ( (px-pt)*(px-p1) )/( (p2-pt)*(p2-p1) )
+!
+!              xxo(k,i,j) = xt*tmpt + x1*tmp1 + x2*tmp2
+!==================================================
               xxo(k,i,j) = x1
-!PFC-daig===
+!==================================================
 
 !
 ! Elseif below bottom analysis level:  output = bottome analysis field value
