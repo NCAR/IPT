@@ -15,13 +15,6 @@ debug = False
 ;
 ShortName = resolution
 
-;grid_file = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne30pg3/emissions-cmip6_C2H4_other_surface_1750_2015_ne30_ne30_c20191022.nc"  ; CSLAM
-;grid_file = "/glade/p/cesmdata/cseg/inputdata/atm/cam/inic/se/fchist_ne0conus30x8_L32_2012-11-01_c190906.nc"  ; se Conus
-; grid_file = "/glade/p/cesmdata/cseg/inputdata/atm/cam/inic/se/cami-mam3_0000-01-01_ne30np4_L30_c100618_conserve.nc" ; se
-; grid_file = "/glade/p/acom/acom-climate/cmip6inputs/historical_C96/emissions-cmip6_CO_other_surface_1750_2015_C96_c20191202.nc" ; C96
-;
-;out_dir = "/glade/p/acom/acom-climate/cmip6inputs/historical_ne0CONUSne30x8/"
-;out_dir = "/glade/p/acom/acom-climate/cmip6inputs/historical_C96/"
 out_dir = dstPath 
 ;
 

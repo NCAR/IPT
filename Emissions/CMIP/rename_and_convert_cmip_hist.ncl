@@ -891,8 +891,8 @@ printVarSummary(ene_ind_so4_vert)
       file_att@molecular_weight = mw
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
-      file_att@data_creator = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator = USER NAME (user_email)
+      file_att@cesm_contact = USER NAME (user_email)
     if sec.ne.1 then
       file_att@data_summary = "Emissions from the Community Emission Data System (CEDS) have been manipulated for use in CESM2 for CMIP6."
       file_att@data_source_url = "http://www.globalchange.umd.edu/ceds/ceds-cmip6-data/" ;
@@ -958,8 +958,8 @@ print(min(emiss_out))
       file_att               = True
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
-      file_att@data_creator = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator = USER NAME (user_email)
+      file_att@cesm_contact = USER NAME (user_email)
       file_att@data_title = "Number of "+sector(sec)+" emissions of "+spc_name+" for CMIP6" 
       fileattdef(ncdf,file_att)
       filedimdef(ncdf,"time",-1,True)
@@ -1008,8 +1008,8 @@ print(min(emiss_out))
       file_att               = True
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
-      file_att@data_creator = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator = USER NAME (user_email)
+      file_att@cesm_contact = USER NAME (user_email)
       file_att@data_title = "Number of "+sector(sec)+" emissions of "+spc_name2+" for CMIP6" 
       fileattdef(ncdf,file_att)
       filedimdef(ncdf,"time",-1,True)
@@ -1107,8 +1107,8 @@ print(spec_name_sec(s1))
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
       file_att@data_title = "Number of "+sector(sec)+" emissions of "+spec_name11+" for CMIP6" 
-      file_att@data_creator = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator = USER NAME (user_email)
+      file_att@cesm_contact = USER NAME (user_email)
       fileattdef(ncdf,file_att)
       filedimdef(ncdf,"time",-1,True)
 ;
@@ -1276,8 +1276,8 @@ print("Min2: "+min(wk))
       file_att@data_title = sector1(sec)+" emissions of "+spc_name+" for CMIP6"
       file_att@molecular_weight = mw
       file_att@creation_date = creation_date
-      file_att@data_creator = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact = "Louisa Emmons (emmons@ucar.edu), Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator = USER NAME (user_email)
+      file_att@cesm_contact = USER NAME (user_email)
       file_att@summary = "Emissions from the Community Emission Data System (CEDS) have been manipulated for use in CESM2 for CMIP6."
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_hist/rename_and_convert_cmip_hist.ncl"
       file_att@data_source_url = "http://www.globalchange.umd.edu/ceds/ceds-cmip6-data/" ;

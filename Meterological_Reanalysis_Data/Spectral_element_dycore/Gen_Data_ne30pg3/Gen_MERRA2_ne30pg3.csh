@@ -9,7 +9,7 @@
 #SBATCH -e Log.Gen_MERRA2_ne30pg3.err.%J
 #SBATCH -o Log.Gen_MERRA2_ne30pg3.out.%J
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=tilmes@ucar.edu
+#SBATCH --mail-user=<email_user>
 #---------------------------------------
 # Script to Generate YOTC Nudging data
 #---------------------------------------
@@ -33,7 +33,6 @@ set MYLOGDIR  = './LOG/LOG_001.'$RUNNUM'/'
 set MYTMPDIR  = './TMP/TMP_001.'$RUNNUM'/'
 set MYOUTDIR  = '/glade/p/acom/MUSICA/met_data/MERRA2_ne30pg3_32L/2012/'
 set INPUTDIR  = '/glade/collections/rda/data/ds313.3/orig_res/'
-#set INPUTDIR  = '/glade/scratch/tilmes/met_data/GEOS5/orig_res/'
 
 # Set ESMF options
 #------------------------
@@ -57,8 +56,7 @@ set MASS_FIX               = 'True'
 
 # Set files containig OUTPUT Grid structure and topography
 #---------------------------------------------------------
-#set fname_grid_info        = '/glade/p/acom/acom-climate/tilmes/inputdata/init/cesm2/SE/f.e22.FC2010climo.ne30pg3_ne30pg3_mg17.cam6_2_022.002.cam.i.0019-01-01-00000.nc'
-set fname_grid_info        = '/glade/scratch/tilmes/archive/f.e22.FCHIST.ne30pg3_ne30pg3_mg17.cam6_2_028.001/rest/2011-01-01-00000/f.e22.FCHIST.ne30pg3_ne30pg3_mg17.cam6_2_028.001.cam.r.2011-01-01-00000.nc'
+set fname_grid_info        = '/glade/p/cesmdata/cseg/inputdata/atm/cam/inic/se/f.e22.FC2010climo.ne30pg3_ne30pg3_mg17.cam6_2_032.001.cam.i.0007-01-01-00000_c200623.nc'
 set fname_phis_output      = '/glade/p/cesmdata/cseg/inputdata/atm/cam/topo/se/ne30pg3_nc3000_Co060_Fi001_PF_nullRR_Nsw042_20171014.nc'
 #set fname_grid_info        = '/glade/p/cesm/cseg/inputdata/atm/cam/inic/se/cami-mam3_0000-01-ne120np4_L30_c110928.nc'
 #set fname_phis_output      = '/glade/p/cesm/cseg/inputdata/atm/cam/topo/USGS-gtopo30_ne120np4_16xdel2-PFC-consistentSGH.nc'

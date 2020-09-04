@@ -29,7 +29,7 @@ load "create_contvolc_files.ncl"
 ; define/change grid information, destination location for the regridded files, and specifc period
 ; options for outgrid 
 
-; add  your own directory if you regrid to a  new grid
+; PLEASE  add your own directory if you regrid to a new grid
   grid_dir ="/glade/work/tilmes/refgrids/"
   wght_dir ="/glade/work/tilmes/regrid/Grid_Weights/"
 ;

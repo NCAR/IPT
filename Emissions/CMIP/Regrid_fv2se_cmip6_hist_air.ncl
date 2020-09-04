@@ -34,32 +34,11 @@ begin
   ;             level when mapping to SE. 
   ;             
   ;------------------------------------------------------------------------------
-  ;grid_dir ="/glade/work/tilmes/refgrids/"
-  ;wght_dir ="/glade/work/tilmes/regrid/Grid_Weights/"
-  ;ingrid   = "f09"
   outgrid  = resolution
-  ;outgrid  = "ne30pg3"
-  ;outgrid   = "C96"
 
   ingrid   = "f09"
   interp   = "conserve"
   srcPath = "/glade/p/acom/acom-climate/cmip6inputs/emis/hist/"
-
-  ; Sanity check
-  ;---------------
-;  if(.not. isfilepresent(srcPath)) then
-;    print(" ")
-;    print("ERROR: Source Data Path Does Not Exist")
-;    print(" ")
-;    exit
-;  end if
-;  if(.not. isfilepresent(dstPath)) then
-;    print(" ")
-;    print("ERROR: Destination Path Does Not Exist")
-;    print("ERROR: I REFUSE To Create it For You! ")
-;    print(" ")
-;    exit
-;  end if
 
   ; Set some constants for readability
   ;------------------------------------
@@ -79,21 +58,6 @@ begin
   print(" ")
   print(Flist)
 
-  ; Set output grid file and set coordinate values
-  ;   SE needs to use info from pentagons file.
-  ;-------------------------------------------------
-  ;if(outgrid.eq."ne30") then
-  ;  dstGridName = grid_dir+"ne30np4_091226_pentagons.nc"
-  ;end if
-  ;if(outgrid.eq."ne30pg3") then
-  ;  dstGridName = grid_dir+"ne30pg3.nc"
-  ;end if
-  ;if(outgrid.eq."ne120") then
-  ;  dstGridName = grid_dir+"ne120np4_pentagons_100310.nc"
-  ;end if
-  ;if(outgrid.eq."C96") then
-  ;  dstGridName = grid_dir+"C96_SCRIP_desc.181018.nc"
-  ;end if
   print(" Using SE pentagons file:"+dstGridName)
   if(isfilepresent(dstGridName)) then
     dstGrid = addfile(dstGridName,"r")
@@ -115,17 +79,6 @@ begin
     print(" ERROR: outgrid for "+outgrid+" not found")
     exit
   end if
-
-  ; Open the first input file adn read in lat/lon values
-  ;  to create ESMF grid info.
-  ;---------------------------------------------------------
-  ;srcGridName = wght_dir+"SCRIP_"+ingrid+"_air.nc"
-
-  ;if(isfilepresent(srcGridName)) then
-  ;  print(" Removing old ESMF weights:"+srcGridName)
-  ;  system("rm -f "+srcGridName)
-  ;end if
-  ;print(" Creating SCRIP file:"+srcGridName)
 
 do s=0,Fnum-1
   srcFileName = srcPath+Flist(s)

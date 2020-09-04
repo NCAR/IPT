@@ -9,7 +9,7 @@
 #SBATCH -e Log.Gen_MERRA2_fv09_32L_002.orig.err.%J
 #SBATCH -o Log.Gen_MERRA2_fv09_32L_002.orig.out.%J
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=tilmes@ucar.edu
+#SBATCH --mail-user=<email_user>
 
 #
 #---------------------------------------
@@ -35,7 +35,6 @@ set MYOUTDIR  = '/glade/p/acom/MUSICA/met_data/MERRA2_fv09_32L/'
 #set INPUTDIR  = '/glade/p/cesm/chwg_dev/met_data/GEOS5/0.9x1.25/'
 #set INPUTDIR  = '/glade/collections/rda/data/ds313.0/orig_res/'
 set INPUTDIR  = '/glade/collections/rda/data/ds313.3/0.9x1.25/'
-#set INPUTDIR  = '/glade/scratch/tilmes/met_data/GEOS5/orig_res/'
 
 
 # Set Clean option
