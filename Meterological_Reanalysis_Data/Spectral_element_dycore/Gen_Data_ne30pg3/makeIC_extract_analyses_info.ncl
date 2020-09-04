@@ -835,7 +835,7 @@ begin
   if(ftype .eq. "GEOS5") then
 
     ; GEOS5
-    ; example dataset:  /gpfs/fs1/scratch/tilmes/met_data/GEOS5/orig_res
+    ; example dataset:   /glade/collections/rda/data/ds313.0/orig_res/   
 
     native_dimname                   = "time"
     att_array@time_dimname           = native_dimname
@@ -878,7 +878,7 @@ begin
   if(ftype .eq. "MERRA2") then
 
     ; MERRA2
-    ; example dataset:  /gpfs/fs1/scratch/tilmes/met_data/GEOS5/orig_res
+    ; example dataset:   /glade/collections/rda/data/ds313.3/orig_res/
 
     native_dimname                   = "time"
     att_array@time_dimname           = native_dimname

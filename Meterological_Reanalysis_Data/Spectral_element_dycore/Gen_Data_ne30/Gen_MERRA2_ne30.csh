@@ -9,7 +9,7 @@
 #SBATCH -e Log.Gen_MERRA2_ne30.err.%J
 #SBATCH -o Log.Gen_MERRA2_ne30.out.%J
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=tilmes@ucar.edu
+#SBATCH --mail-user=<emial_user>
 #---------------------------------------
 # Script to Generate YOTC Nudging data
 #---------------------------------------
@@ -33,7 +33,6 @@ set MYLOGDIR  = './LOG/LOG_001.'$RUNNUM'/'
 set MYTMPDIR  = './TMP/TMP_001.'$RUNNUM'/'
 set MYOUTDIR  = '/glade/p/acom/MUSICA/met_data/MERRA2_ne30_32L/2012/'
 set INPUTDIR  = '/glade/collections/rda/data/ds313.3/orig_res/'
-#set INPUTDIR  = '/glade/scratch/tilmes/met_data/GEOS5/orig_res/'
 
 # Set ESMF options
 #------------------------

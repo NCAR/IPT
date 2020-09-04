@@ -33,7 +33,7 @@ begin
   grid_dir ="/glade/work/tilmes/refgrids/"
 
   ; Directory to write new grid weights (change to your directory)
-  wght_dir ="/glade/scratch/emmons/emis/Grid_Weights/"
+  wght_dir ="/glade/scratch/$USER/emis/Grid_Weights/"
 
   ; Type of interpolation
   interp   = "conserve"
@@ -47,11 +47,10 @@ begin
   ;outgrid  = "conus_30_x8"
 
   ; Directory of original emissions files - all files will be processed
-  ;srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
-  srcPath = "/glade/scratch/emmons/emis/cams/"
+  srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
 
   ; Directory for new files
-  dstPath = "/glade/scratch/emmons/emis/cams_ne30np4/"
+  dstPath = "/glade/scratch/$USER/emis/cams_ne30np4/"
 
   ; Set output grid file and set coordinate values
   ;   SE needs to use info from pentagons file.

@@ -13,7 +13,7 @@ begin
 ; USER CHANGES START
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Location of files created with Regrid_fv2se_cams_anthro.ncl
-dir_inp = "/glade/scratch/emmons/emis/cams_ne30np4/"
+dir_inp = "/glade/scratch/$USER/emis/cams_ne30np4/"
 ;
 ; version of CAMS files (in filename)
 version= "_v3.1"
@@ -24,7 +24,7 @@ resolution = "ne30np4"
 ;resolution = "ne30pg3"
 ;
 ; Directory for new files
-dir_out = "/glade/scratch/emmons/emis/cesm_ne30np4/"
+dir_out = "/glade/scratch/$USER/emis/cesm_ne30np4/"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; USER CHANGES END
@@ -559,8 +559,8 @@ end if
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
       file_att@data_title = "Emissions of "+spc_name+" for CESM"
-      file_att@data_creator= "Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact= "Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator= $USER  (email_user) 
+      file_att@cesm_contact= $USER  (email_user)               
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_cams/regrid_cams_anthro_se.ncl"
       file_att@data_summary = "CAMS Emissions have been manipulated for use in CESM2" 
       file_att@data_source_url = "https://eccad3.sedoo.fr" ;
@@ -607,8 +607,8 @@ end if
       file_att               = True
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
-      file_att@data_creator= "Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact= "Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator= $USER  (email_user)
+      file_att@cesm_contact= $USER  (email_user)
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_cams/regrid_cams_anthro_se.ncl"
       file_att@data_summary = "CAMS Emissions have been manipulated for use in CESM2"
       file_att@data_source_url = "https://eccad3.sedoo.fr" ;
@@ -650,8 +650,8 @@ end if
       file_att               = True
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
-      file_att@data_creator= "Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact= "Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator= $USER  (email_user)
+      file_att@cesm_contact= $USER  (email_user)
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_cams/regrid_cams_anthro_se.ncl"
       file_att@data_summary = "CAMS Emissions have been manipulated for use in CESM2"
       file_att@data_source_url = "https://eccad3.sedoo.fr" ;
@@ -744,8 +744,8 @@ print(spec_name_sec(s1))
       file_att@source_file   = file_name
       file_att@creation_date = creation_date
       file_att@data_title = "Emissions of "+spec_name11+" for CESM"
-      file_att@data_creator= "Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact= "Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator= $USER  (email_user)
+      file_att@cesm_contact= $USER  (email_user)
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_cams/regrid_cams_anthro_se.ncl"
       file_att@data_summary = "CAMS Emissions have been manipulated for use in CESM2"
       file_att@data_source_url = "https://eccad3.sedoo.fr" ;
@@ -889,8 +889,8 @@ do sec=0,0
       file_att@molecular_weight = mw
       file_att@data_title = "Emissions of "+spc_name+" for CESM"
       file_att@creation_date = creation_date
-      file_att@data_creator= "Simone Tilmes (tilmes@ucar.edu)"
-      file_att@cesm_contact= "Simone Tilmes (tilmes@ucar.edu)"
+      file_att@data_creator= $USER  (email_user)
+      file_att@cesm_contact= $USER  (email_user)
       file_att@data_script = "/glade/u/home/tilmes/scripts/CMIP6/emissions_cams/regrid_cams_anthro_se.ncl"
       file_att@data_summary = "CAMS Emissions have been manipulated for use in CESM2"
       file_att@data_source_url = "https://eccad3.sedoo.fr" ;
