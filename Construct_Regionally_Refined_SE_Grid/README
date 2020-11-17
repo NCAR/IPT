@@ -1,3 +1,4 @@
+***** This code has been replaced by: https://github.com/ESMCI/Community_Mesh_Generation_Toolkit ****
 
 This directory contains the collection of tools needed to create CESM
 intput files for a given variable resolution grid. 
