@@ -1,17 +1,20 @@
-;load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
-;load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
-;load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/esmf/ESMF_regridding.ncl"
-
 function open_netcdf_for_regridding(sfile,dfile,interp_method,src_fname)
 local regrid_file, regrid_fname, regrid_dir
-begin
-    regrid_dir   = "/glade/u/home/tilmes/acom-climate/tilmes/inputdata/init/cesm2/SE/"
-    regrid_fname = regrid_dir + src_fname+"_ne0conus30x8_t12.nc"
 
-    ;setfileoption("nc")         
-    ;setfileoption("nc","Format","NetCDF4")         
-     setfileoption("nc","Format","NetCDF4Classic")         
+; PLEASE FIND 'USER CHANGES' to adjust the program for your case
+; replace any <your_...> with the appropriate directory or file name
+;
+begin
+; USER CHANGES
+
+;   add your destination directory and file name where your regrid file will be written to  
+    regrid_dir   = "<your_VRM_Files>/<your_grid>/inic/"
+    regrid_fname = regrid_dir + src_fname+"_<your_grid>.nc"
+
+; END USER CHANGES        
+
+    setfileoption("nc","Format","NetCDF4Classic")         
 
     system("/bin/rm -f "+regrid_fname)        ; delete any pre-existing file
     rfile = addfile(regrid_fname, "c")  ; open for writing
@@ -123,27 +126,25 @@ end
 ;----------------------------------------------------------------------
 begin
 ;---Source lat/lon mesh and variable to regrid
-  ;src_dir   = "/gpfs/fs1/p/acom/acom-climate/tilmes/inputdata/init/cesm2/SE/"
-;  src_dir   = "/glade/scratch/tilmes/f.e21.FCHIST.ne30_ne30_mg17.6hr_nudge_geos5.spinup/run/"
-  src_dir   = "//glade/u/home/tilmes/acom-climate/tilmes/inputdata/init/cesm2/SE/"
-;  src_dir   = "/glade/scratch/tilmes/archive/f.e21.FCHIST.ne30_ne30_mg17.50hrs_nudge_geos5.spinup1/rest/2019-10-13-00000/"
-  ;src_fname = "f.e20.FCHIST.ne30_ne30.r05.SGLC.001.cam.i.2012-07-01-00000.nc"
-  src_fname = "f.e22.FCnudged.ne30_ne30_mg17.cam6_2_032.001.cam.i.2012-12-01-00000.nc"
-  src_file  = addfile(src_dir + src_fname,"r")
+; USER CHANGES        
+; Change to the starting date you need.
+; existing ne30_ne30 are locally on cheyenne at: /glade/p/acom/MUSICA/init/ne30_ne30/ 
+  src_dir   = "/glade/p/acom/MUSICA/init/ne30_ne30/2020/"
+  src_fname = "f.e22.FCnudged.ne30_ne30_mg17.release-cesm2.2.0.2015_2020.001.cam.i.2020-04-01-00000.nc"
+; END USER CHANGES        
 
 ;---Source lat/lon mesh
   src_lat = src_file->lat    
   src_lon = src_file->lon
   src_dims = dimsizes(src_lat)    ; 48602 cells
 
+
 ;---Destination lat/lon mesh
-  ;dst_dir   = "/gpfs/fs1/p/nsc/nacm0003/results/CAM-SE/archive/f.asd2017.cesm20b05.FAMIPC6CLM5.ne0conus30x8_t12.expr211_fglmod.chem_RHS_2/rest/2013-07-01-00000/"
-  ;dst_fname = "f.asd2017.cesm20b05.FAMIPC6CLM5.ne0conus30x8_t12.expr211_fglmod.chem_RHS_2.cam.i.2013-07-01-00000.nc"
-  ;dst_dir   = "/glade/p/nsc/nacm0003/results/CAM-SE/cam6_1_029_final/archive/cam6_1_029.FCHIST.ne0CONUSne30x8_ne0CONUSne30x8_mt12.TS1_NEI_FINN_OCEAN_2700_pecount/atm/hist/"
-  ;dst_fname = "cam6_1_029.FCHIST.ne0CONUSne30x8_ne0CONUSne30x8_mt12.TS1_NEI_FINN_OCEAN_2700_pecount.cam.i.2012-11-02-00000.nc"
-  dst_dir   = "/glade/p/acom/acom-climate/tilmes/inputdata/init/cesm2/SE/"
-  dst_fname = "opt_se_cslam_nov2019.FCHIST.ne30_ne30_mg17.TS1_pecount2700_CAM_spinup.cam.i.2012-12-01-00000.nc_ne0conus30x8_t12_cdf5.nc"
+; USER CHANGES        
+  dst_dir   = "<your_VRM_Files>/<your_grid>/inic/"
+  dst_fname = "cami-mam4_0000-01-01_<your_grid>.nc"
   dfile = addfile(dst_dir + dst_fname,"r")
+; END USER CHANGES        
 
   dst_lat = dfile->lat
   dst_lon = dfile->lon
