@@ -45,6 +45,8 @@ begin
   outgrid   = "ne30np4"
   ;outgrid   = "ne30pg3"
   ;outgrid  = "conus_30_x8"
+  ;outgrid = "655362"
+  ;outgrid = "6488066"
 
   ; Directory of original emissions files - all files will be processed
   srcPath = "/glade/p/acom/acom-climate/tilmes/emis/download/"
@@ -55,6 +57,8 @@ begin
   ; Set output grid file and set coordinate values
   ;   SE needs to use info from pentagons file.
   ;-------------------------------------------------
+  doMPAS = False
+  dstGridName_ESMF = " "
   if(outgrid.eq."ne30np4") then
     dstGridName = grid_dir+"ne30np4_091226_pentagons.nc"
   end if
@@ -67,7 +71,32 @@ begin
   if(outgrid.eq."ne30pg3") then
     dstGridName = grid_dir+"ne30pg3.nc"
   end if
-  print(" Using SE pentagons file:"+dstGridName)
+  if(outgrid.eq."655362") then
+    doMPAS = True
+    dstGridName = grid_dir+"x1.655362.grid.nc"
+    dstGridName_ESMF = wght_dir+"MPAS_ESMF."+outgrid+".nc"
+    interp = "bilinear"
+  end if
+  if(outgrid.eq."6488066") then
+    doMPAS = True
+    dstGridName = grid_dir+"x5.6488066.grid.CONUS.nc"
+    dstGridName_ESMF = wght_dir+"MPAS_ESMF."+outgrid+".nc"
+    interp = "bilinear"
+  end if
+  if(doMPAS) then
+    lon  = "lonCell"
+    lat  = "latCell"
+    area = "areaCell"
+    vert = "cellsOnVertex"
+    r2d  = get_r2d("double")
+    print(" Using MPAS unstructured file:"+dstGridName)
+  else
+    lon  = "grid_center_lon"
+    lat  = "grid_center_lat"
+    area = "grid_area"
+    r2d  = 1.d
+    print(" Using SE pentagons file:"+dstGridName)
+  end if
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  USER CHANGES END 
@@ -92,31 +121,48 @@ begin
   print(Flist)
 
   if(isfilepresent(dstGridName)) then
-    dstGrid = addfile(dstGridName,"r")
-    dstLon  = dstGrid->grid_center_lon
-    dstLon!0          = "ncol"
-    dstLon@units      = "degrees_east"
-    dstLon@long_name  = "longitude"
-    dstLat  = dstGrid->grid_center_lat
-    dstLat!0          = "ncol"
-    dstLat@units      = "degrees_north"
-    dstLat@long_name  = "latgitude"
-    dstArea = dstGrid->grid_area
-    dstArea!0         = "ncol"
-    dstArea@units     = "normalized"
-    dstArea@long_name = "gridpoint area"
-    dstNcol           = dimsizes(dstArea)
-    delete(dstGrid)
+     dstGrid           = addfile(dstGridName,"r")
+     dstLon            = dstGrid->$lon$
+     dstLon            = r2d*dstLon
+     dstLon!0          = "ncol"
+     dstLon@units      = "degrees_east"
+     dstLon@long_name  = "longitude"
+     dstLat            = dstGrid->$lat$
+     dstLat            = r2d*dstLat
+     dstLat!0          = "ncol"
+     dstLat@units      = "degrees_north"
+     dstLat@long_name  = "latitude"
+     dstArea           = dstGrid->$area$
+     dstArea!0         = "ncol"
+     dstArea@long_name = "gridpoint area"
+     dstNcol           = dimsizes(dstArea)
+     if(doMPAS) then
+        if(isfilepresent(dstGridName_ESMF)) then
+           print(" Removing old MPAS_ESMF:"+dstGridName_ESMF)
+           system("rm -f "+dstGridName_ESMF)
+        end if
+        ESMFopt = True
+        ESMFopt@ForceOverwrite  = True  ; False
+        ESMFopt@PrintTimings    = True  ; False
+        ESMFopt@Title           = "MPAS "+outgrid+" mesh"
+        ESMFopt@Debug           = False ;True
+        dstElVertices           = dstGrid->cellsOnVertex
+        ESMFopt@ElementVertices = dstElVertices-1
+        unstructured_to_ESMF(dstGridName_ESMF,dstLat,dstLon,ESMFopt)
+        delete(ESMFopt)
+        print(" ")
+     end if
   else
     print(" ERROR: outgrid for "+outgrid+" not found")
     exit
   end if
+  delete(dstGrid)
+
 
   ; Open the first input file and read in lat/lon values
   ;  to create ESMF grid info.
   ;---------------------------------------------------------
   srcGridName = wght_dir+"SCRIP_"+ingrid+"_cams.nc"
-
   if(isfilepresent(srcGridName)) then
     print(" Removing old ESMF weights:"+srcGridName)
     system("rm -f "+srcGridName)
@@ -153,6 +199,7 @@ begin
     exit
   end if
 
+
   ; Remove existing ESMF weights, create new values
   ;---------------------------------------------------------
   wgtGridName = wght_dir+"ESMFmap_"+ingrid+"_"+outgrid+"_"+interp+"_cams.nc"
@@ -172,10 +219,17 @@ begin
   ESMFopt@DstGridLon    = dstLon
   ESMFopt@InterpMethod  = interp
   ESMFopt@Debug         = False ; True
-  ESMFopt@PrintTimings  = False ; True
-  ESMFopt@SrcESMF       = False
-  ESMFopt@DstESMF       = False
-  ESMF_regrid_gen_weights(srcGridName,dstGridName,wgtGridName,ESMFopt)
+  ESMFopt@PrintTimings  = False
+  if(doMPAS) then
+     ESMFopt@SrcESMF       = False
+     ESMFopt@DstESMF       = True
+     ESMF_regrid_gen_weights(srcGridName,dstGridName_ESMF,wgtGridName,ESMFopt)
+  else
+     ESMFopt@SrcESMF       = False
+     ESMFopt@DstESMF       = False
+     ESMF_regrid_gen_weights(srcGridName,dstGridName,wgtGridName,ESMFopt)
+  end if
+  print(" End ESMF_regrid_gen_weights")
 
   ; Open Source file
   ;------------------
