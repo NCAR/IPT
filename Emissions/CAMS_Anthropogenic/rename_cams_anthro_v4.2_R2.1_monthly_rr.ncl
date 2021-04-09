@@ -22,10 +22,7 @@ resolution = "ne30np4"
 ;resolution = "ne30pg3"
 ;
 ; Directory for new files
-;dir_out = "/glade/scratch/$USER/emis/cesm_ne30np4/"
-;dir_out = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2/ne30np4/"
-;dir_out = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2/ne0np4.Asia03.ne30x8/"
-dir_out = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2_R2.1/ne30np4/2008_2020/"
+dir_out = "/glade/scratch/$USER/emis/cesm_ne30np4/"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; USER CHANGES END

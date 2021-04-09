@@ -36,10 +36,10 @@ begin
   ;outgrid  = "conus_30_x8"
 
   ; Directory to read grid defintions
-  grid_dir ="/glade/p/cesm/chwg_dev/<user>/VRM_Files/"+outgrid+"/grids/"
+  grid_dir ="/glade/p/cesm/chwg_dev/$USER/VRM_Files/"+outgrid+"/grids/"
 
   ; Directory to write new grid weights (change to your directory)
-  wght_dir ="/glade/work/<user>/regrid/Grid_Weights/"
+  wght_dir ="/glade/work/$USER/regrid/Grid_Weights/"
 
   ; Type of interpolation
   interp   = "conserve"
@@ -52,7 +52,7 @@ begin
   srcPath = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2/orig/"
 
   ; Directory for new files
-  dstPath = "/glade/scratch/<user>/emissions/cams/ne30np4/"
+  dstPath = "/glade/scratch/$USER/emissions/cams/ne30np4/"
 
   ; Set output grid file and set coordinate values
   ;   SE needs to use info from pentagons file.

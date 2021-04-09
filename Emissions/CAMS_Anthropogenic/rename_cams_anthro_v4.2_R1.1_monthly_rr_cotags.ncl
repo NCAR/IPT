@@ -18,13 +18,10 @@ version= "v4.2"
 resolution = "ne30np4"
 ;resolution = "ne0np4_Asia03_ne30x8"
 ;resolution = "ne30pg3"
-;
+
 ; Directory for new files
-;dir_out = "/glade/scratch/$USER/emis/cesm_ne30np4/"
-;dir_out = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2/ne30np4/"
-;dir_out = "/glade/p/acom/MUSICA/emissions/cams/CAMS-GLOB-ANTv4.2/ne0np4.Asia03.ne30x8/"
-dir_out = dir_inp
-;
+dir_out = "/glade/scratch/$USER/emis/cesm_ne30np4/"
+
 creation_date = systemfunc ("date +%Y%m%d")
 
 regions = (/"NAmerica","Europe","NAfrica","WAsia","EAsia","SAmerica","SAfrica","Australia"/)
