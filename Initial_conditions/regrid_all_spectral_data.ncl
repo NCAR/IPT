@@ -8,7 +8,7 @@ local regrid_file, regrid_fname, regrid_dir
 begin
 ; USER CHANGES
 
-;   add your destination directory and file name where your regrid file will be written to  
+; edit the directory and file name for where your regridded file will be written
     regrid_dir   = "<your_VRM_Files>/<your_grid>/inic/"
     regrid_fname = regrid_dir + src_fname+"_<your_grid>.nc"
 
@@ -133,14 +133,20 @@ begin
   src_fname = "f.e22.FCnudged.ne30_ne30_mg17.release-cesm2.2.0.2015_2020.001.cam.i.2020-04-01-00000.nc"
 ; END USER CHANGES        
 
+  src_file = addfile(src_dir + src_fname,"r")
+
 ;---Source lat/lon mesh
   src_lat = src_file->lat    
   src_lon = src_file->lon
   src_dims = dimsizes(src_lat)    ; 48602 cells
 
+;---Source date
+  date = src_file->date
+  datesec = src_file->datesec
 
 ;---Destination lat/lon mesh
 ; USER CHANGES        
+;  specify an existing file with the new grid
   dst_dir   = "<your_VRM_Files>/<your_grid>/inic/"
   dst_fname = "cami-mam4_0000-01-01_<your_grid>.nc"
   dfile = addfile(dst_dir + dst_fname,"r")
@@ -158,8 +164,8 @@ begin
   ;P0 = dfile->P0
   ilev = dfile->ilev
   time = dfile->time
-  date = dfile->date
-  datesec = dfile->datesec
+  ;date = dfile->date
+  ;datesec = dfile->datesec
   time_bnds= dfile->time_bnds
   ndbase= dfile->ndbase
   nsbase= dfile->nsbase
