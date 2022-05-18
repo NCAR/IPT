@@ -2,8 +2,9 @@
 
 F90    = $(FC)
 C_C    = $(CC)
-LIBS   = -L$(NETCDF_DIR)/lib $(AR_FILES)
-INCLUDE_MODULES = -I$(NETCDF_DIR)/include
+LIBS   = -L$(NETCDFC_DIR)/lib -L$(NETCDF_DIR)/lib $(AR_FILES)
+INCLUDE_MODULES = -I$(NETCDFC_DIR)/include -I$(NETCDF_DIR)/include
+
 
 ifeq ($(C_C),pgcc)
   CCFLAGS += -g -O2 -Ktrap=fp
