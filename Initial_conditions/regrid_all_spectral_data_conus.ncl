@@ -144,7 +144,7 @@ begin
 ;---Destination lat/lon mesh
 ; USER CHANGES: already changed for CONUS      
   dst_dir   = "/glade/p/acom/MUSICA/init/ne0CONUSne30x8/atm/"
-  dst_fname = "f.e22.FCnudged.ne0CONUSne30x8_ne0CONUSne30x8_mt12.cesm2_2_alpha06b.001.cam.i.2013-01-01-00000.nc"
+  dst_fname = "f.e22.FCcotagsNudged.ne0CONUSne30x8.cesm220.2012-01.cam.i.2012-02-01-00000.nc"
   dfile = addfile(dst_dir + dst_fname,"r")
 ; END USER CHANGES        
 
