@@ -1,11 +1,9 @@
+# This repository has moved to: https://github.com/NCAR/MUSICA-Tools
+
 # IPT
 Input Processing Tools for MUSICA
 
-Detailed discussion will be provided on the MUSICA wiki. [https://wiki.ucar.edu/display/MUSICA/MUSICA+Home]
-
-This collection of scripts and code are for the production of input fields that are required to run MUSICA-V0.  They target emissions, meterological reanalyses for nudging, and initial conditions.
-
-These scripts will not be advanced or maintained due to the fact that MUSICA will soon provide infrastructure to do the regridding online as part of the model.  This scripts are provided to the community now so that they can use MUSICA-V0
+More information available on the MUSICA wiki. [https://wiki.ucar.edu/display/MUSICA/MUSICA+Home]
 
 
 ## Emissions gridding toools
