@@ -63,7 +63,16 @@ else
   echo "============================================================================="
 endif
 
-set ar_libs = -lnetcdf
+if( ! $?NETCDFC_DIR ) then
+  set NETCDFC_DIR = "$NETCDF_DIR"
+endif 
+
+set ar_libs = ""
+
+if( -e ${NETCDFC_DIR}/lib/libnetcdf.a ) then
+  set ar_libs = "-lnetcdf"
+endif
+
 if( -e ${NETCDF_DIR}/lib/libnetcdff.a ) then
   set ar_libs = "${ar_libs} -lnetcdff"
 endif
